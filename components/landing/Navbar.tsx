@@ -1,0 +1,152 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+const navLinks = [
+  { label: "Pricing", href: "#pricing" },
+  { label: "FAQ", href: "#faq" },
+];
+
+function scrollTo(hash: string) {
+  const el = document.querySelector(hash);
+  el?.scrollIntoView({ behavior: "smooth" });
+}
+
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleNavClick = useCallback(
+    (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+      e.preventDefault();
+      setMobileOpen(false);
+      scrollTo(href);
+    },
+    [],
+  );
+
+  return (
+    <motion.header
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "border-b border-mcpl-cyan/10 bg-mcpl-deep/80 backdrop-blur-xl"
+          : "bg-transparent backdrop-blur-sm"
+      }`}
+    >
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        {/* Logo */}
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: "smooth" });
+          }}
+          className="flex items-center gap-0.5 select-none"
+        >
+          <span className="font-[family-name:var(--font-heading)] text-2xl font-bold text-mcpl-cyan">
+            M
+          </span>
+          <span className="font-[family-name:var(--font-heading)] text-lg font-medium text-foreground">
+            CPLaunch
+          </span>
+        </a>
+
+        {/* Desktop nav */}
+        <div className="hidden items-center gap-8 md:flex">
+          {navLinks.map((link) => (
+            <a
+              key={link.label}
+              href={link.href}
+              onClick={(e) => handleNavClick(e, link.href)}
+              className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              {link.label}
+            </a>
+          ))}
+
+          <a
+            href="#live-demo"
+            onClick={(e) => handleNavClick(e, "#live-demo")}
+            className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Demo
+          </a>
+
+          <Button
+            className="h-9 cursor-pointer rounded-lg bg-mcpl-cyan px-5 text-sm font-semibold text-mcpl-deep shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-shadow hover:bg-mcpl-cyan/90 hover:shadow-[0_0_30px_rgba(0,229,255,0.5)]"
+            onClick={() => scrollTo("#live-demo")}
+          >
+            Start Free
+            <ArrowRight className="ml-1 size-3.5" />
+          </Button>
+        </div>
+
+        {/* Mobile hamburger */}
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="inline-flex cursor-pointer items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:text-foreground md:hidden"
+          aria-label="Toggle menu"
+        >
+          {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+        </button>
+      </nav>
+
+      {/* Mobile panel */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden border-b border-mcpl-cyan/10 bg-mcpl-deep/95 backdrop-blur-xl md:hidden"
+          >
+            <div className="flex flex-col gap-4 px-6 py-6">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {link.label}
+                </a>
+              ))}
+
+              <a
+                href="#live-demo"
+                onClick={(e) => handleNavClick(e, "#live-demo")}
+                className="cursor-pointer text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Demo
+              </a>
+
+              <Button
+                className="mt-2 h-10 w-full cursor-pointer rounded-lg bg-mcpl-cyan text-sm font-semibold text-mcpl-deep shadow-[0_0_20px_rgba(0,229,255,0.3)]"
+                onClick={() => {
+                  setMobileOpen(false);
+                  scrollTo("#live-demo");
+                }}
+              >
+                Start Free
+                <ArrowRight className="ml-1 size-3.5" />
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
+  );
+}
