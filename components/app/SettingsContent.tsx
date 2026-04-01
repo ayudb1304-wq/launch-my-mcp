@@ -120,14 +120,18 @@ export function SettingsContent({
           )}
         </div>
 
-        {/* Upgrade Plans */}
-        {plan === "free" && (
+        {/* Upgrade Plans — show plans higher than current */}
+        {plan !== "super" && (
           <div>
             <h2 className="mb-4 text-lg font-medium text-white">
               Upgrade your plan
             </h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              {upgradePlans.map(([id, p]) => (
+              {upgradePlans.filter(([id]) => {
+                if (plan === "free") return true;
+                if (plan === "starter") return id === "super";
+                return false;
+              }).map(([id, p]) => (
                 <div
                   key={id}
                   className={`rounded-lg border p-6 ${

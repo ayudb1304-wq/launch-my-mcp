@@ -125,7 +125,11 @@ export function StepReview() {
     const currentPlanInfo = PLANS[paywallPlan];
     const upgradePlans = (
       Object.entries(PLANS) as [PlanId, (typeof PLANS)[PlanId]][]
-    ).filter(([id]) => id !== "free");
+    ).filter(([id]) => {
+      if (paywallPlan === "free") return id !== "free";
+      if (paywallPlan === "starter") return id === "super";
+      return false;
+    });
 
     return (
       <div className="space-y-6">
