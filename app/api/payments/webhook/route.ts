@@ -157,16 +157,48 @@ export async function POST(request: Request) {
 
     case "subscription.renewed": {
       const subscriptionId = data.subscription_id ?? data.id;
+      const productId = data.product_id;
+
       if (subscriptionId) {
+        // Update subscription record
         await supabase
           .from("subscriptions")
           .update({
             status: "active",
+            product_id: productId ?? undefined,
             current_period_start:
               data.current_period_start ?? new Date().toISOString(),
             current_period_end: data.current_period_end ?? null,
           })
           .eq("subscription_id", subscriptionId);
+
+        // Also sync the user's plan from product_id (handles plan changes)
+        if (productId) {
+          const plan = getPlanByProductId(productId);
+          if (plan) {
+            const metadata = data.metadata ?? {};
+            const userId = metadata.user_id;
+            const customerEmail = data.customer?.email;
+
+            let resolvedUserId = userId;
+            if (!resolvedUserId && customerEmail) {
+              const { data: userRow } = await supabase
+                .from("users")
+                .select("id")
+                .eq("email", customerEmail)
+                .maybeSingle();
+              resolvedUserId = userRow?.id;
+            }
+
+            if (resolvedUserId) {
+              await supabase
+                .from("users")
+                .update({ plan })
+                .eq("id", resolvedUserId);
+              console.log(`Subscription renewed: user=${resolvedUserId}, plan synced to ${plan}`);
+            }
+          }
+        }
       }
       break;
     }
