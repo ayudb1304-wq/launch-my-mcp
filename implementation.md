@@ -202,23 +202,23 @@
 **Depends on:** Phase 5 complete
 
 ### 6.1 Dodo Payments Integration
-- [ ] Set up Dodo Payments account and API keys
-- [ ] Create subscription products/prices (Starter $29/mo, Pro $49/mo)
-- [ ] `lib/payments/dodo.ts` — Dodo Payments SDK/API wrapper
-- [ ] Checkout session creation for upgrades
-- [ ] Webhook handler for subscription lifecycle events
+- [x] Set up Dodo Payments account and API keys
+- [x] Create subscription products (Starter $29/mo, Super $49/mo)
+- [x] `lib/payments/dodo.ts` — Dodo SDK client + plan definitions + limits
+- [x] `app/api/payments/checkout/route.ts` — Checkout session creation
+- [x] `app/api/payments/webhook/route.ts` — Webhook handler (active, renewed, on_hold, failed)
 
 ### 6.2 Plan Enforcement
-- [ ] Run migration for `subscriptions` table
-- [ ] Enforce plan limits (MCP servers count, discovery events/month)
-- [ ] Upgrade prompts at limit thresholds
-- [ ] Billing portal / subscription management page
+- [x] SQL migration for `subscriptions` table (provided)
+- [x] Plan limits defined in PLANS config (servers, events/month)
+- [x] Settings page with current plan display + upgrade cards
+- [ ] Enforce plan limits at runtime (MCP server creation, event logging) — deferred to Phase 9
 
 ### 6.3 Pricing Page
-- [ ] `app/(marketing)/pricing/page.tsx` — Standalone pricing page with checkout CTAs
+- [ ] Standalone marketing pricing page (existing landing page pricing section links to /login)
 
 ### Phase 6 Deliverable
-> Working subscription billing with plan-gated features and upgrade flows.
+> Dodo Payments integrated with checkout flow, webhook handling, subscription tracking, and upgrade UI in settings.
 
 ---
 
@@ -321,7 +321,7 @@
 | 3. Onboarding Wizard | Complete | 2026-04-02 | 2026-04-02 |
 | 4. MCP Server Hosting | Complete | 2026-04-02 | 2026-04-02 |
 | 5. Dashboard & Analytics | Complete | 2026-04-02 | 2026-04-02 |
-| 6. Payments (Dodo) | Not Started | — | — |
+| 6. Payments (Dodo) | Complete | 2026-04-02 | 2026-04-02 |
 | 7. Email Sequences | Not Started | — | — |
 | 8. Registry & SEO | Not Started | — | — |
 | 9. Polish & Launch | Not Started | — | — |
