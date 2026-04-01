@@ -14,7 +14,11 @@ import {
   X,
   Pencil,
   RotateCcw,
+  Lock,
+  Sparkles,
+  ExternalLink,
 } from "lucide-react";
+import { PLANS, type PlanId } from "@/lib/payments/plans";
 
 function QualityBadge({ score }: { score: number }) {
   if (score >= 8) return <Badge className="bg-green-500/20 text-green-400">Excellent ({score}/10)</Badge>;
@@ -28,8 +32,28 @@ export function StepReview() {
   const [slugInput, setSlugInput] = useState(store.slug);
   const [editingDesc, setEditingDesc] = useState<number | null>(null);
   const [descInput, setDescInput] = useState("");
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallPlan, setPaywallPlan] = useState<PlanId>("free");
+  const [upgradeLoading, setUpgradeLoading] = useState<string | null>(null);
 
   const enabledCount = store.tools.filter((t) => t.enabled).length;
+
+  async function handleUpgrade(targetPlan: PlanId) {
+    setUpgradeLoading(targetPlan);
+    try {
+      const res = await fetch("/api/payments/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: targetPlan }),
+      });
+      const data = await res.json();
+      if (data.checkout_url) {
+        window.location.href = data.checkout_url;
+      }
+    } catch {
+      setUpgradeLoading(null);
+    }
+  }
 
   async function handleSave() {
     if (enabledCount === 0) return;
@@ -57,7 +81,13 @@ export function StepReview() {
 
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || "Save failed");
+        if (data.error === "plan_limit") {
+          store.setSaving(false);
+          setPaywallPlan(data.current_plan);
+          setShowPaywall(true);
+          return;
+        }
+        throw new Error(data.message || data.error || "Save failed");
       }
 
       const { project_id } = await res.json();
@@ -88,6 +118,114 @@ export function StepReview() {
   function saveDesc(index: number) {
     store.updateToolDescription(index, descInput);
     setEditingDesc(null);
+  }
+
+  // Paywall overlay
+  if (showPaywall) {
+    const currentPlanInfo = PLANS[paywallPlan];
+    const upgradePlans = (
+      Object.entries(PLANS) as [PlanId, (typeof PLANS)[PlanId]][]
+    ).filter(([id]) => id !== "free");
+
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400/10">
+            <Lock className="h-7 w-7 text-yellow-400" />
+          </div>
+          <h3 className="font-heading text-xl font-bold text-white">
+            Upgrade to deploy more servers
+          </h3>
+          <p className="mt-2 text-sm text-gray-400">
+            Your {currentPlanInfo.name} plan includes{" "}
+            {currentPlanInfo.limits.maxServers} MCP server
+            {currentPlanInfo.limits.maxServers > 1 ? "s" : ""}. Upgrade to
+            unlock more.
+          </p>
+        </div>
+
+        {/* Your tools preview (grayed out) */}
+        <div className="rounded-lg border border-gray-800 bg-gray-900/30 p-4 opacity-50">
+          <p className="mb-2 text-xs font-medium text-gray-500">
+            Your generated tools for {store.name}
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {store.tools
+              .filter((t) => t.enabled)
+              .map((t) => (
+                <span
+                  key={t.name}
+                  className="rounded bg-gray-800 px-2 py-1 text-xs text-gray-400"
+                >
+                  {t.name}
+                </span>
+              ))}
+          </div>
+        </div>
+
+        {/* Upgrade cards */}
+        <div className="space-y-3">
+          {upgradePlans.map(([id, plan]) => (
+            <div
+              key={id}
+              className={`rounded-lg border p-5 ${
+                id === "starter"
+                  ? "border-mcpl-cyan/30 bg-mcpl-cyan/5"
+                  : "border-gray-800 bg-gray-900/50"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-heading text-lg font-bold text-white">
+                    {plan.name}
+                  </h4>
+                  <div className="mt-1 flex items-baseline gap-1">
+                    <span className="text-xl font-bold text-white">
+                      {plan.price}
+                    </span>
+                    <span className="text-sm text-gray-400">{plan.period}</span>
+                  </div>
+                  <p className="mt-1 text-xs text-gray-400">
+                    {plan.limits.maxServers} MCP servers &middot;{" "}
+                    {plan.limits.maxEventsPerMonth === -1
+                      ? "Unlimited"
+                      : plan.limits.maxEventsPerMonth.toLocaleString()}{" "}
+                    events/mo
+                  </p>
+                </div>
+                <Button
+                  className={
+                    id === "starter"
+                      ? "bg-mcpl-cyan text-mcpl-deep hover:bg-mcpl-cyan/90"
+                      : "bg-white/10 text-white hover:bg-white/20"
+                  }
+                  disabled={upgradeLoading !== null}
+                  onClick={() => handleUpgrade(id)}
+                >
+                  {upgradeLoading === id ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                  )}
+                  Upgrade
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Back button */}
+        <Button
+          variant="ghost"
+          className="w-full text-gray-400 hover:text-white"
+          onClick={() => setShowPaywall(false)}
+        >
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to review
+        </Button>
+      </div>
+    );
   }
 
   return (

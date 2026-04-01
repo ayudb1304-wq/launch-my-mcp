@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { PLANS, type PlanId } from "@/lib/payments/plans";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -46,6 +47,33 @@ export async function POST(request: Request) {
   }
 
   const { name, slug, description, website_url, tools } = parsed.data;
+
+  // Check plan limits
+  const { data: userData } = await supabase
+    .from("users")
+    .select("plan")
+    .eq("id", user.id)
+    .single();
+
+  const userPlan = (userData?.plan as PlanId) ?? "free";
+  const planLimits = PLANS[userPlan].limits;
+
+  const { count: projectCount } = await supabase
+    .from("mcp_projects")
+    .select("*", { count: "exact", head: true })
+    .eq("user_id", user.id);
+
+  if ((projectCount ?? 0) >= planLimits.maxServers) {
+    return NextResponse.json(
+      {
+        error: "plan_limit",
+        message: `Your ${PLANS[userPlan].name} plan allows ${planLimits.maxServers} MCP server${planLimits.maxServers > 1 ? "s" : ""}. Upgrade to create more.`,
+        current_plan: userPlan,
+        limit: planLimits.maxServers,
+      },
+      { status: 403 },
+    );
+  }
 
   // Check slug uniqueness
   const { data: existing } = await supabase
