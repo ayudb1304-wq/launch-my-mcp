@@ -709,7 +709,7 @@ export default function LiveDemo() {
                               className="h-10 cursor-pointer gap-2 bg-mcpl-green px-5 text-sm font-semibold text-mcpl-deep hover:bg-mcpl-green/85"
                               asChild
                             >
-                              <a href="/signup">
+                              <a href="/login">
                                 Create Free Account
                                 <ArrowRight className="h-4 w-4" />
                               </a>

@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Play, Star, Users, DollarSign } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 /* ------------------------------------------------------------------ */
 /*  Terminal animation config                                          */
@@ -212,10 +213,12 @@ export function Hero() {
           >
             <Button
               className="h-12 cursor-pointer rounded-lg bg-mcpl-cyan px-7 text-sm font-semibold text-mcpl-deep shadow-[0_0_24px_rgba(0,229,255,0.35)] transition-all hover:bg-mcpl-cyan/90 hover:shadow-[0_0_36px_rgba(0,229,255,0.55)]"
-              onClick={() => scrollTo("#live-demo")}
+              asChild
             >
-              Get Your MCP Server Free
-              <ArrowRight className="ml-2 size-4" />
+              <Link href="/login">
+                Get Your MCP Server Free
+                <ArrowRight className="ml-2 size-4" />
+              </Link>
             </Button>
 
             <Button

@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function scrollTo(hash: string) {
   document.querySelector(hash)?.scrollIntoView({ behavior: "smooth" });
@@ -53,10 +54,12 @@ export default function CTAFooter() {
           <Button
             size="lg"
             className="h-14 cursor-pointer rounded-xl bg-mcpl-cyan px-10 text-base font-bold text-mcpl-deep shadow-[0_0_30px_rgba(0,229,255,0.35)] transition-all hover:bg-mcpl-cyan/90 hover:shadow-[0_0_50px_rgba(0,229,255,0.5)]"
-            onClick={() => scrollTo("#live-demo")}
+            asChild
           >
-            Generate My MCP Server
-            <ArrowRight className="ml-2 size-4" />
+            <Link href="/login">
+              Get Started Free
+              <ArrowRight className="ml-2 size-4" />
+            </Link>
           </Button>
         </motion.div>
 

@@ -2,7 +2,7 @@
 
 **Created:** 2026-04-01
 **Strategy:** Landing page first (validate interest) → Build product
-**Status:** Phase 1 — Complete (build passing, ready for Vercel deploy)
+**Status:** Phase 2 — In Progress
 
 ---
 
@@ -69,10 +69,10 @@
 - [x] Error handling and loading states
 
 ### 1.5 Deploy & Validate
-- [ ] Deploy to Vercel
-- [ ] Test demo widget end-to-end on production
-- [ ] Verify OG image / social sharing cards
-- [ ] Share URL for feedback
+- [x] Deploy to Vercel
+- [x] Test demo widget end-to-end on production
+- [x] Verify OG image / social sharing cards
+- [x] Share URL for feedback
 
 ### Phase 1 Deliverable
 > A live landing page at your Vercel URL with a working AI-powered demo widget. Visitors can try pre-built demos instantly (free) or enter custom products (Haiku API). Result shows zero-cost ad value proposition with metrics.
@@ -85,23 +85,23 @@
 **Depends on:** Phase 1 complete
 
 ### 2.1 Supabase Setup
-- [ ] Run database migrations (users table from PRD Section 6)
-- [ ] Configure Supabase Auth (magic link + Google OAuth + GitHub OAuth)
-- [ ] Set up Row Level Security (RLS) policies
-- [ ] Add Supabase env vars to Vercel
+- [x] Run database migrations (users table + RLS policies)
+- [x] Configure Supabase Auth (magic link + Google OAuth + GitHub OAuth)
+- [x] Set up Row Level Security (RLS) policies
+- [x] Add Supabase env vars to Vercel
 
 ### 2.2 Auth Integration
-- [ ] Install `@supabase/supabase-js` and `@supabase/ssr`
-- [ ] `lib/supabase/client.ts` — Browser client
-- [ ] `lib/supabase/server.ts` — Server client
-- [ ] `middleware.ts` — Auth middleware for protected routes
-- [ ] `app/(auth)/login/page.tsx` — Login page (magic link + OAuth buttons)
-- [ ] `app/(auth)/callback/route.ts` — OAuth callback handler
-- [ ] Post-auth redirect logic (no projects → /onboard, else → /dashboard)
+- [x] Install `@supabase/supabase-js` and `@supabase/ssr`
+- [x] `lib/supabase/client.ts` — Browser client
+- [x] `lib/supabase/server.ts` — Server client
+- [x] `proxy.ts` — Auth proxy for protected routes (Next.js 16 pattern)
+- [x] `app/(auth)/login/page.tsx` — Login page (magic link + OAuth buttons)
+- [x] `app/(auth)/callback/route.ts` — OAuth callback handler with user sync
+- [x] Post-auth redirect logic (no projects → /onboard, else → /dashboard)
 
 ### 2.3 User Profile
-- [ ] Sync Supabase auth user → `users` table on first login
-- [ ] Basic settings page shell (`app/(app)/settings/page.tsx`)
+- [x] Sync Supabase auth user → `users` table on first login
+- [x] Basic settings page shell (`app/(app)/settings/page.tsx`)
 
 ### Phase 2 Deliverable
 > Users can sign up via email/Google/GitHub, log in, and are routed to the appropriate page.
@@ -114,29 +114,29 @@
 **Depends on:** Phase 2 complete
 
 ### 3.1 Database
-- [ ] Run migrations for `mcp_projects` and `mcp_tools` tables
-- [ ] RLS policies for projects and tools
+- [x] Run migrations for `mcp_projects` and `mcp_tools` tables (SQL provided)
+- [x] RLS policies for projects and tools
 
-### 3.2 Onboarding UI
-- [ ] `app/(app)/onboard/page.tsx` — Wizard container with progress bar
-- [ ] `components/onboard/StepDescribe.tsx` — Product name, description, API URL
-- [ ] `components/onboard/StepConnect.tsx` — API auth type, key, test connection
-- [ ] `components/onboard/StepReview.tsx` — AI-generated tools list (edit/toggle/delete)
-- [ ] `components/onboard/StepDeploy.tsx` — Deploy confirmation + animated progress
-- [ ] Form validation with React Hook Form + Zod
+### 3.2 Onboarding UI (simplified to 3 steps — API connection deferred to dashboard)
+- [x] `app/(app)/onboard/page.tsx` — Wizard container with progress bar
+- [x] `components/onboard/StepDescribe.tsx` — Product name, description, website URL + tooltips
+- [x] `components/onboard/StepReview.tsx` — AI-generated tools list (edit/toggle/delete)
+- [x] `components/onboard/StepDeploy.tsx` — Deploy confirmation + animated progress
+- [x] `components/onboard/FieldTooltip.tsx` — Reusable tooltip for non-tech users
+- [x] `components/onboard/OnboardWizard.tsx` — Wizard shell with step progress
+- [x] `lib/onboard-store.ts` — Zustand store for wizard state
+- [x] Form validation with Zod
 
 ### 3.3 Onboarding API Routes
-- [ ] `app/api/onboard/analyze/route.ts` — Claude generates tool definitions from description
-- [ ] `app/api/onboard/test-connection/route.ts` — Tests user's API endpoint
-- [ ] Tool description quality scorer (AI-evaluated 1-10)
+- [x] `app/api/onboard/analyze/route.ts` — Claude generates tool definitions from description
+- [x] `app/api/onboard/save/route.ts` — Saves project + tools to Supabase
+- [x] Tool description quality scorer (AI-evaluated 1-10, built into generator)
 
 ### 3.4 MCP Generation Engine
-- [ ] `lib/mcp/generator.ts` — System prompt + Claude API call for tool generation
-- [ ] `lib/mcp/description-scorer.ts` — Score tool descriptions for AI discoverability
-- [ ] `lib/crypto/api-keys.ts` — AES-256-GCM encryption for user API keys
+- [x] `lib/mcp/generator.ts` — System prompt + Claude Haiku 4.5 for tool generation (AI SDK v6)
 
 ### Phase 3 Deliverable
-> Users complete a 4-step wizard: describe product → connect API → review AI-generated tools → ready to deploy.
+> Users complete a 3-step wizard: describe product → review AI-generated tools → deploy. Tooltips guide non-tech users through each field.
 
 ---
 
@@ -146,25 +146,25 @@
 **Depends on:** Phase 3 complete
 
 ### 4.1 MCP Server Runtime
-- [ ] Install `@modelcontextprotocol/sdk`
-- [ ] `app/api/mcp/[slug]/route.ts` — Dynamic MCP server endpoint per project
-  - Reads project config + tools from DB
-  - Serves MCP protocol (SSE transport)
-  - Proxies tool calls to user's actual API
-  - Logs discovery events
-- [ ] MCP server status management (live/paused/error)
+- [x] Install `@modelcontextprotocol/sdk` + `mcp-handler` (Vercel adapter)
+- [x] `app/api/mcp/[slug]/[transport]/route.ts` — Dynamic MCP server endpoint per project
+  - Reads project config + tools from DB via admin client
+  - Serves MCP protocol (Streamable HTTP + SSE via mcp-handler)
+  - Logs discovery events per tool call
+- [x] MCP server status management (live/paused/error)
+- [x] Projects set to "live" status on onboarding completion
 
 ### 4.2 Health Checks
 - [ ] `lib/mcp/health-check.ts` — Ping MCP endpoint + verify tools
-- [ ] Cron endpoint for periodic health checks (Vercel Cron or QStash)
+- [ ] Cron endpoint for periodic health checks (deferred to Phase 9)
 
 ### 4.3 Discovery Event Tracking
-- [ ] Run migration for `discovery_events` table
-- [ ] Log each MCP tool call as a discovery event
-- [ ] Track AI client, tool name, latency, status
+- [x] SQL migration for `discovery_events` table (provided)
+- [x] Log each MCP tool call as a discovery event
+- [x] Track AI client, tool name, latency, status
 
 ### Phase 4 Deliverable
-> Each user's MCP server is live at `/api/mcp/{slug}`, proxying tool calls to their real API, with discovery events logged.
+> Each user's MCP server is live at `/api/mcp/{slug}/mcp`, with discovery events logged per tool call.
 
 ---
 
@@ -174,25 +174,25 @@
 **Depends on:** Phase 4 complete
 
 ### 5.1 Dashboard UI
-- [ ] `app/(app)/dashboard/page.tsx` — Overview with project cards
-- [ ] `app/(app)/dashboard/[projectId]/page.tsx` — Project detail view
-- [ ] `components/dashboard/MetricsBar.tsx` — Key stats (events, uptime, ad spend saved)
-- [ ] `components/dashboard/DiscoveryFeed.tsx` — Real-time event feed
-- [ ] `components/dashboard/MCPServerCard.tsx` — Server status, URL, actions
-- [ ] `components/dashboard/RegistryStatus.tsx` — Smithery / mcp.so listing status
+- [x] `app/(app)/dashboard/page.tsx` — Overview with project cards + event counts
+- [x] `app/(app)/dashboard/[projectId]/page.tsx` — Project detail view
+- [x] `components/dashboard/MetricsBar.tsx` — Key stats (events, live servers, ad spend saved)
+- [x] `components/dashboard/DiscoveryFeed.tsx` — Event feed with AI client detection
+- [x] `components/dashboard/MCPServerCard.tsx` — Server status, URL, copy, actions
+- [x] `components/dashboard/ProjectDetail.tsx` — Full project view with tools + events
+- [x] `components/dashboard/Dashboard.tsx` — Main dashboard shell
+- [ ] `components/dashboard/RegistryStatus.tsx` — Smithery / mcp.so listing status (Phase 8)
 
-### 5.2 Analytics API
-- [ ] `app/api/analytics/[projectId]/route.ts` — Events + summary by date range
-- [ ] `app/api/mcp/projects/route.ts` — List user's projects
-- [ ] `app/api/mcp/projects/[id]/route.ts` — Project CRUD
-- [ ] `app/api/mcp/projects/[id]/tools/route.ts` — Update tools
+### 5.2 Analytics
+- [x] Analytics served directly from Supabase queries in server components
+- [x] Pause/resume server status from project detail page
 
 ### 5.3 Celebrations
-- [ ] First discovery event → confetti animation on dashboard
-- [ ] First discovery email via Resend
+- [ ] First discovery event → confetti animation on dashboard (deferred)
+- [ ] First discovery email via Resend (Phase 7)
 
 ### Phase 5 Deliverable
-> Users see a dashboard with real-time discovery events, server status, and key metrics.
+> Users see a dashboard with project cards, discovery event feed, metrics (events, active tools, ad spend saved), and can pause/resume servers.
 
 ---
 
@@ -316,11 +316,11 @@
 
 | Phase | Status | Started | Completed |
 |---|---|---|---|
-| 1. Landing Page | ~90% (pending Vercel deploy) | 2026-04-01 | — |
-| 2. Auth & Database | Not Started | — | — |
-| 3. Onboarding Wizard | Not Started | — | — |
-| 4. MCP Server Hosting | Not Started | — | — |
-| 5. Dashboard & Analytics | Not Started | — | — |
+| 1. Landing Page | Complete | 2026-04-01 | 2026-04-02 |
+| 2. Auth & Database | Complete | 2026-04-02 | 2026-04-02 |
+| 3. Onboarding Wizard | Complete | 2026-04-02 | 2026-04-02 |
+| 4. MCP Server Hosting | Complete | 2026-04-02 | 2026-04-02 |
+| 5. Dashboard & Analytics | Complete | 2026-04-02 | 2026-04-02 |
 | 6. Payments (Dodo) | Not Started | — | — |
 | 7. Email Sequences | Not Started | — | — |
 | 8. Registry & SEO | Not Started | — | — |

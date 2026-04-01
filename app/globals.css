@@ -45,8 +45,8 @@
 }
 
 @theme inline {
-    --font-sans: var(--font-sans);
-    --font-mono: var(--font-mono);
+    --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
     --font-heading: var(--font-heading);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);

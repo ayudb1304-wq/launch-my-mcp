@@ -171,13 +171,9 @@ export function Pricing() {
                     ? "bg-mcpl-cyan text-mcpl-deep hover:bg-mcpl-cyan/80"
                     : "bg-secondary text-foreground hover:bg-secondary/80",
                 )}
-                onClick={() => {
-                  document
-                    .getElementById("live-demo")
-                    ?.scrollIntoView({ behavior: "smooth" });
-                }}
+                asChild
               >
-                {plan.cta}
+                <a href="/login">{plan.cta}</a>
               </Button>
             </motion.div>
           ))}

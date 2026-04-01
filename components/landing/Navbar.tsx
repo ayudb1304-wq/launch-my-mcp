@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 const navLinks = [
   { label: "Pricing", href: "#pricing" },
@@ -84,12 +85,21 @@ export function Navbar() {
             Demo
           </a>
 
+          <Link
+            href="/login"
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Log in
+          </Link>
+
           <Button
             className="h-9 cursor-pointer rounded-lg bg-mcpl-cyan px-5 text-sm font-semibold text-mcpl-deep shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-shadow hover:bg-mcpl-cyan/90 hover:shadow-[0_0_30px_rgba(0,229,255,0.5)]"
-            onClick={() => scrollTo("#live-demo")}
+            asChild
           >
-            Start Free
-            <ArrowRight className="ml-1 size-3.5" />
+            <Link href="/login">
+              Start Free
+              <ArrowRight className="ml-1 size-3.5" />
+            </Link>
           </Button>
         </div>
 
@@ -133,15 +143,22 @@ export function Navbar() {
                 Demo
               </a>
 
+              <Link
+                href="/login"
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                onClick={() => setMobileOpen(false)}
+              >
+                Log in
+              </Link>
+
               <Button
                 className="mt-2 h-10 w-full cursor-pointer rounded-lg bg-mcpl-cyan text-sm font-semibold text-mcpl-deep shadow-[0_0_20px_rgba(0,229,255,0.3)]"
-                onClick={() => {
-                  setMobileOpen(false);
-                  scrollTo("#live-demo");
-                }}
+                asChild
               >
-                Start Free
-                <ArrowRight className="ml-1 size-3.5" />
+                <Link href="/login" onClick={() => setMobileOpen(false)}>
+                  Start Free
+                  <ArrowRight className="ml-1 size-3.5" />
+                </Link>
               </Button>
             </div>
           </motion.div>
