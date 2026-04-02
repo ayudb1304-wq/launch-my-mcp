@@ -11,6 +11,7 @@ const deploySteps = [
   "Setting up your AI server...",
   "Loading your product profile...",
   "Connecting to AI networks...",
+  "Submitting to AI registries...",
   "You're live! AI can find you now.",
 ];
 

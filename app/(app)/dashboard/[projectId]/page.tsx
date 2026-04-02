@@ -46,12 +46,21 @@ export default async function ProjectDetailPage({
     .select("*", { count: "exact", head: true })
     .eq("project_id", projectId);
 
+  const { data: userData } = await supabase
+    .from("users")
+    .select("plan")
+    .eq("id", user.id)
+    .single();
+
+  const userPlan = (userData?.plan as "free" | "starter" | "super") ?? "free";
+
   return (
     <ProjectDetail
       project={project}
       tools={tools ?? []}
       events={events ?? []}
       totalEvents={totalEvents ?? 0}
+      userPlan={userPlan}
     />
   );
 }

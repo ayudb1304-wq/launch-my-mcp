@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { DiscoveryFeed } from "./DiscoveryFeed";
+import { RegistryStatus } from "./RegistryStatus";
+import type { PropagationStatus } from "@/lib/registries/config";
 
 interface Project {
   id: string;
@@ -25,6 +27,7 @@ interface Project {
   status: string;
   created_at: string;
   website_url: string | null;
+  propagation_status: PropagationStatus | null;
 }
 
 interface Tool {
@@ -56,11 +59,13 @@ export function ProjectDetail({
   tools,
   events,
   totalEvents,
+  userPlan = "free",
 }: {
   project: Project;
   tools: Tool[];
   events: DiscoveryEvent[];
   totalEvents: number;
+  userPlan?: "free" | "starter" | "super";
 }) {
   const supabase = createClient();
   const [copied, setCopied] = useState(false);
@@ -203,6 +208,15 @@ export function ProjectDetail({
             Connect API
           </Button>
         </div>
+      </div>
+
+      {/* Registry Distribution */}
+      <div className="mt-6">
+        <RegistryStatus
+          projectId={project.id}
+          propagationStatus={project.propagation_status}
+          userPlan={userPlan}
+        />
       </div>
 
       {/* Two columns: Tools + Events */}

@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { PLANS, type PlanId } from "@/lib/payments/plans";
+import { submitToAllRegistries } from "@/lib/registries/submit";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -149,6 +150,11 @@ export async function POST(request: Request) {
       { status: 500 },
     );
   }
+
+  // Fire-and-forget: auto-submit to registries based on user plan
+  submitToAllRegistries(project.id, userPlan).catch((err) =>
+    console.error("Auto-submission failed:", err),
+  );
 
   return NextResponse.json({ project_id: project.id, slug });
 }

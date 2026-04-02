@@ -7,7 +7,7 @@ import {
   Activity,
   Copy,
   Check,
-  ExternalLink,
+  Globe,
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
@@ -20,6 +20,9 @@ interface Project {
   status: string;
   created_at: string;
   event_count: number;
+  propagation_status?: {
+    registries?: Record<string, { status: string }>;
+  } | null;
 }
 
 const statusConfig: Record<
@@ -84,6 +87,21 @@ export function MCPServerCard({ project }: { project: Project }) {
               <Activity className="h-3.5 w-3.5 text-primary" />
               {project.event_count} discovery events
             </span>
+            {(() => {
+              const regs = project.propagation_status?.registries;
+              const indexed = regs
+                ? Object.values(regs).filter((r) => r.status === "indexed").length
+                : 0;
+              const total = 4;
+              return (
+                <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <Globe className="h-3.5 w-3.5 text-primary" />
+                  {indexed > 0
+                    ? `Listed on ${indexed}/${total} registries`
+                    : "Not listed yet"}
+                </span>
+              );
+            })()}
             <span className="text-xs text-muted-foreground">
               Created{" "}
               {new Date(project.created_at).toLocaleDateString("en-US", {
