@@ -18,7 +18,7 @@ export default async function DashboardPage() {
 
   const { data: projects } = await supabase
     .from("mcp_projects")
-    .select("id, name, slug, description, status, created_at")
+    .select("id, name, slug, description, status, created_at, propagation_status")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 

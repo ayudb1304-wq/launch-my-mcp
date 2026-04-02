@@ -152,9 +152,13 @@ export async function POST(request: Request) {
   }
 
   // Fire-and-forget: auto-submit to registries based on user plan
-  submitToAllRegistries(project.id, userPlan).catch((err) =>
-    console.error("Auto-submission failed:", err),
-  );
+  try {
+    submitToAllRegistries(project.id, userPlan).catch((err) =>
+      console.error("Auto-submission failed:", err),
+    );
+  } catch {
+    // Never block deploy for registry submission failures
+  }
 
   return NextResponse.json({ project_id: project.id, slug });
 }
