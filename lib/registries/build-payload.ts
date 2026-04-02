@@ -46,7 +46,7 @@ export function buildSubmissionPayload(
     name: project.name,
     slug: project.slug,
     description: project.description,
-    serverUrl: `${BASE_URL}/mcp/${project.slug}/streamable-http`,
+    serverUrl: `${BASE_URL}/api/mcp/${project.slug}/mcp`,
     transport: "streamable-http",
     tools: enabledTools.map((t) => ({
       name: t.name,
