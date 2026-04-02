@@ -5,7 +5,7 @@ import { getListingUrl } from "./config";
 
 const API_BASE = "https://api.smithery.ai";
 const REGISTRY_BASE = "https://registry.smithery.ai";
-const NAMESPACE = "launchmymcp";
+const NAMESPACE = process.env.SMITHERY_NAMESPACE || "launchmymcp";
 
 interface SmitheryResult {
   success: boolean;

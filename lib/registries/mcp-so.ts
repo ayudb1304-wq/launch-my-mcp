@@ -64,7 +64,6 @@ ${toolList}
         body: JSON.stringify({
           title: issueTitle,
           body: issueBody,
-          labels: ["server-submission"],
         }),
       },
     );
