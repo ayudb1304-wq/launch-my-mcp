@@ -36,9 +36,9 @@ function timeAgo(dateStr: string): string {
 export function DiscoveryFeed({ events }: { events: DiscoveryEvent[] }) {
   if (events.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-gray-700 p-8 text-center">
-        <Activity className="mx-auto h-8 w-8 text-gray-600" />
-        <p className="mt-3 text-sm text-gray-500">
+      <div className="rounded-lg border border-dashed border-border p-8 text-center">
+        <Activity className="mx-auto h-8 w-8 text-muted-foreground/50" />
+        <p className="mt-3 text-sm text-muted-foreground">
           No discovery events yet. Once AI assistants start using your tools,
           events will appear here.
         </p>
@@ -51,30 +51,30 @@ export function DiscoveryFeed({ events }: { events: DiscoveryEvent[] }) {
       {events.map((event) => (
         <div
           key={event.id}
-          className="flex items-center gap-3 rounded-lg border border-gray-800 bg-gray-900/50 px-3 py-2.5"
+          className="flex items-center gap-3 rounded-lg bg-card px-3 py-2.5 ring-1 ring-foreground/10"
         >
           <div
             className={`h-2 w-2 shrink-0 rounded-full ${
-              event.status === "success" ? "bg-green-400" : "bg-red-400"
+              event.status === "success" ? "bg-green-500" : "bg-red-500"
             }`}
           />
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <code className="truncate text-xs font-medium text-mcpl-cyan">
+              <code className="truncate text-xs font-medium text-primary">
                 {event.tool_name}
               </code>
-              <span className="shrink-0 text-xs text-gray-500">
+              <span className="shrink-0 text-xs text-muted-foreground">
                 by {parseAiClient(event.ai_client)}
               </span>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-3">
             {event.latency_ms != null && (
-              <span className="text-xs text-gray-600">
+              <span className="text-xs text-muted-foreground/60">
                 {event.latency_ms}ms
               </span>
             )}
-            <span className="text-xs text-gray-500">
+            <span className="text-xs text-muted-foreground">
               {timeAgo(event.created_at)}
             </span>
           </div>

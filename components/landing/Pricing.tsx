@@ -86,20 +86,18 @@ const cardVariants = {
 export function Pricing() {
   return (
     <section id="pricing" className="relative px-6 py-24 md:py-32">
-      <div className="mx-auto max-w-5xl">
+      <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.5 }}
-          className="mb-16 text-center"
+          className="mb-12"
         >
-          <h2 className="font-[family-name:var(--font-heading)] text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            Simple, transparent pricing
+          <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+            Simple pricing.{" "}
+            <span className="text-muted-foreground">Scale when you&apos;re ready.</span>
           </h2>
-          <p className="mt-4 text-muted-foreground">
-            Start free. Scale when you&apos;re ready.
-          </p>
         </motion.div>
 
         <motion.div
@@ -107,7 +105,7 @@ export function Pricing() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-80px" }}
-          className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-3 md:gap-0"
+          className="grid grid-cols-1 items-stretch gap-4 md:grid-cols-3"
         >
           {plans.map((plan) => (
             <motion.div
@@ -117,18 +115,18 @@ export function Pricing() {
               className={cn(
                 "relative flex flex-col rounded-xl border p-6",
                 plan.highlighted
-                  ? "z-10 border-mcpl-cyan/50 bg-card shadow-[0_0_40px_-12px_var(--mcpl-cyan)] md:-my-4 md:rounded-xl md:p-8"
-                  : "border-border bg-card hover:border-border/80 hover:shadow-lg",
+                  ? "z-10 border-foreground bg-card shadow-sm"
+                  : "border-border bg-card hover:border-border/80 hover:shadow-sm",
               )}
             >
               {plan.highlighted && (
-                <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2 border-mcpl-cyan/30 bg-mcpl-cyan/10 text-mcpl-cyan">
+                <Badge className="absolute -top-2.5 left-1/2 -translate-x-1/2">
                   Most Popular
                 </Badge>
               )}
 
               <div className="mb-6">
-                <h3 className="font-[family-name:var(--font-heading)] text-sm font-bold tracking-wide text-muted-foreground">
+                <h3 className="text-sm font-bold tracking-wide text-muted-foreground">
                   {plan.name}
                 </h3>
                 <div className="mt-3 flex items-baseline gap-1">
@@ -145,7 +143,7 @@ export function Pricing() {
                 {plan.features.map((feature) => (
                   <li key={feature.text} className="flex items-center gap-2.5">
                     {feature.included ? (
-                      <Check className="size-4 shrink-0 text-mcpl-green" />
+                      <Check className="size-4 shrink-0 text-foreground" />
                     ) : (
                       <X className="size-4 shrink-0 text-muted-foreground/50" />
                     )}
@@ -168,8 +166,8 @@ export function Pricing() {
                 className={cn(
                   "mt-auto w-full cursor-pointer",
                   plan.highlighted
-                    ? "bg-mcpl-cyan text-mcpl-deep hover:bg-mcpl-cyan/80"
-                    : "bg-secondary text-foreground hover:bg-secondary/80",
+                    ? ""
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
                 )}
                 asChild
               >
@@ -179,7 +177,7 @@ export function Pricing() {
           ))}
         </motion.div>
 
-        <p className="mt-8 text-center text-xs text-muted-foreground/60">
+        <p className="mt-8 text-xs text-muted-foreground/60">
           All plans include: Cloudflare edge hosting &middot; SSL &middot;
           Uptime monitoring
         </p>

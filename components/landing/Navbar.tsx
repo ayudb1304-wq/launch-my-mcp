@@ -42,7 +42,7 @@ export function Navbar() {
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "border-b border-mcpl-cyan/10 bg-mcpl-deep/80 backdrop-blur-xl"
+          ? "border-b border-border bg-background/80 backdrop-blur-md"
           : "bg-transparent backdrop-blur-sm"
       }`}
     >
@@ -56,11 +56,8 @@ export function Navbar() {
           }}
           className="flex items-center gap-0.5 select-none"
         >
-          <span className="font-[family-name:var(--font-heading)] text-2xl font-bold text-mcpl-cyan">
-            M
-          </span>
-          <span className="font-[family-name:var(--font-heading)] text-lg font-medium text-foreground">
-            CPLaunch
+          <span className="text-lg font-bold text-foreground">
+            Launch My MCP
           </span>
         </a>
 
@@ -93,7 +90,7 @@ export function Navbar() {
           </Link>
 
           <Button
-            className="h-9 cursor-pointer rounded-lg bg-mcpl-cyan px-5 text-sm font-semibold text-mcpl-deep shadow-[0_0_20px_rgba(0,229,255,0.3)] transition-shadow hover:bg-mcpl-cyan/90 hover:shadow-[0_0_30px_rgba(0,229,255,0.5)]"
+            className="h-9 cursor-pointer rounded-lg px-5 text-sm font-semibold"
             asChild
           >
             <Link href="/login">
@@ -121,7 +118,7 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden border-b border-mcpl-cyan/10 bg-mcpl-deep/95 backdrop-blur-xl md:hidden"
+            className="overflow-hidden border-b border-border bg-background/95 backdrop-blur-md md:hidden"
           >
             <div className="flex flex-col gap-4 px-6 py-6">
               {navLinks.map((link) => (
@@ -152,7 +149,7 @@ export function Navbar() {
               </Link>
 
               <Button
-                className="mt-2 h-10 w-full cursor-pointer rounded-lg bg-mcpl-cyan text-sm font-semibold text-mcpl-deep shadow-[0_0_20px_rgba(0,229,255,0.3)]"
+                className="mt-2 h-10 w-full cursor-pointer rounded-lg text-sm font-semibold"
                 asChild
               >
                 <Link href="/login" onClick={() => setMobileOpen(false)}>

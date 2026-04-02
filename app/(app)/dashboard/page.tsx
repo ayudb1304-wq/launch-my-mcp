@@ -53,15 +53,15 @@ export default async function DashboardPage() {
     <div className="p-6 lg:p-8">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-foreground">
             Dashboard
           </h1>
-          <p className="mt-1 text-sm text-gray-400">
+          <p className="mt-1 text-sm text-muted-foreground">
             Monitor your MCP servers and AI discovery events.
           </p>
         </div>
         <Link href="/onboard">
-          <Button className="bg-mcpl-cyan text-mcpl-deep hover:bg-mcpl-cyan/90">
+          <Button>
             <Plus className="mr-2 h-4 w-4" />
             New Server
           </Button>

@@ -11,7 +11,7 @@ export function FieldTooltip({ text }: { text: string }) {
       <TooltipTrigger asChild>
         <button
           type="button"
-          className="inline-flex text-gray-500 transition-colors hover:text-gray-300"
+          className="inline-flex text-muted-foreground transition-colors hover:text-foreground"
           tabIndex={-1}
         >
           <HelpCircle className="h-3.5 w-3.5" />
@@ -19,7 +19,7 @@ export function FieldTooltip({ text }: { text: string }) {
       </TooltipTrigger>
       <TooltipContent
         side="top"
-        className="max-w-xs border-gray-700 bg-gray-800 text-xs text-gray-200"
+        className="max-w-xs text-xs shadow-xl"
       >
         {text}
       </TooltipContent>

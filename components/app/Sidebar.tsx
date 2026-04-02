@@ -56,17 +56,14 @@ function SidebarContent({
   return (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <div className="flex h-16 items-center border-b border-white/5 px-5">
+      <div className="flex h-16 items-center border-b border-border px-5">
         <Link
           href="/dashboard"
           className="flex items-center gap-0.5"
           onClick={onNavigate}
         >
-          <span className="font-heading text-xl font-bold text-[var(--mcpl-cyan)]">
-            M
-          </span>
-          <span className="font-heading text-lg font-medium text-white">
-            CPLaunch
+          <span className="text-base font-bold text-foreground">
+            Launch My MCP
           </span>
         </Link>
       </div>
@@ -86,8 +83,8 @@ function SidebarContent({
               onClick={onNavigate}
               className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                 isActive
-                  ? "bg-[var(--mcpl-cyan)]/10 text-[var(--mcpl-cyan)]"
-                  : "text-gray-400 hover:bg-white/5 hover:text-white"
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
               }`}
             >
               <item.icon className="h-4 w-4 shrink-0" />
@@ -100,11 +97,11 @@ function SidebarContent({
         {projects.length > 0 && (
           <div className="pt-4">
             <div className="flex items-center justify-between px-3 pb-2">
-              <span className="text-xs font-medium uppercase tracking-wider text-gray-500">
+              <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                 MCP Servers
               </span>
               <Link href="/onboard" onClick={onNavigate}>
-                <Plus className="h-3.5 w-3.5 text-gray-500 hover:text-white" />
+                <Plus className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
               </Link>
             </div>
             {projects.map((project) => {
@@ -116,17 +113,17 @@ function SidebarContent({
                   onClick={onNavigate}
                   className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
                     isActive
-                      ? "bg-[var(--mcpl-cyan)]/10 text-[var(--mcpl-cyan)]"
-                      : "text-gray-400 hover:bg-white/5 hover:text-white"
+                      ? "bg-primary/10 text-primary"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   }`}
                 >
                   <div
                     className={`h-2 w-2 shrink-0 rounded-full ${
                       project.status === "live"
-                        ? "bg-green-400"
+                        ? "bg-green-500"
                         : project.status === "paused"
-                          ? "bg-yellow-400"
-                          : "bg-gray-600"
+                          ? "bg-amber-500"
+                          : "bg-zinc-400"
                     }`}
                   />
                   <span className="truncate">{project.name}</span>
@@ -141,7 +138,7 @@ function SidebarContent({
           <Link href="/onboard" onClick={onNavigate}>
             <Button
               variant="outline"
-              className="w-full justify-start gap-2 border-dashed border-gray-700 text-gray-400 hover:border-[var(--mcpl-cyan)]/30 hover:text-white"
+              className="w-full justify-start gap-2 border-dashed"
             >
               <Plus className="h-4 w-4" />
               New MCP Server
@@ -151,12 +148,12 @@ function SidebarContent({
       </nav>
 
       {/* User section */}
-      <div className="border-t border-white/5 p-3">
+      <div className="border-t border-border p-3">
         <div className="flex items-center justify-between rounded-lg px-3 py-2">
-          <span className="truncate text-xs text-gray-400">{email}</span>
+          <span className="truncate text-xs text-muted-foreground">{email}</span>
           <button
             onClick={handleSignOut}
-            className="shrink-0 text-gray-500 hover:text-white"
+            className="shrink-0 text-muted-foreground hover:text-foreground"
           >
             <LogOut className="h-4 w-4" />
           </button>
@@ -169,7 +166,7 @@ function SidebarContent({
 // Desktop sidebar
 export function Sidebar(props: SidebarProps) {
   return (
-    <aside className="hidden h-screen w-60 shrink-0 border-r border-white/5 bg-[var(--mcpl-navy)] lg:block">
+    <aside className="hidden h-screen w-60 shrink-0 border-r border-border bg-card lg:block">
       <SidebarContent {...props} />
     </aside>
   );
@@ -185,14 +182,14 @@ export function MobileSidebar(props: SidebarProps) {
         <Button
           variant="ghost"
           size="icon"
-          className="shrink-0 text-gray-400 hover:text-white lg:hidden"
+          className="shrink-0 lg:hidden"
         >
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-60 border-white/5 bg-[var(--mcpl-navy)] p-0"
+        className="w-60 border-border bg-card p-0"
       >
         <SheetTitle className="sr-only">Navigation</SheetTitle>
         <SidebarContent {...props} onNavigate={() => setOpen(false)} />

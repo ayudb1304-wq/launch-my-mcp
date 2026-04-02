@@ -22,12 +22,12 @@ const faqs = [
   {
     question: "Do I need technical skills?",
     answer:
-      "Not at all. Just describe what your product does in plain English and paste your API link. MCPLaunch handles everything else — no coding, no configuration files, no DevOps.",
+      "Not at all. Just describe what your product does in plain English and paste your API link. Launch My MCP handles everything else — no coding, no configuration files, no DevOps.",
   },
   {
     question: "What kind of products work with this?",
     answer:
-      "Any product with an API — SaaS tools, data services, marketplaces, productivity apps, and more. If your product has an API that returns data, MCPLaunch can make it discoverable by AI assistants.",
+      "Any product with an API — SaaS tools, data services, marketplaces, productivity apps, and more. If your product has an API that returns data, Launch My MCP can make it discoverable by AI assistants.",
   },
   {
     question: "How long does setup take?",
@@ -72,25 +72,29 @@ export function FAQ() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
 
-      <div className="mx-auto max-w-2xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.5 }}
-          className="mb-12 text-center"
-        >
-          <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground md:text-4xl">
-            Frequently Asked Questions
-          </h2>
-        </motion.div>
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.5fr] lg:items-start lg:gap-16">
+          {/* Left: headline */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.5 }}
+            className="lg:sticky lg:top-32"
+          >
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+              Questions?{" "}
+              <span className="text-muted-foreground">We&apos;ve got answers.</span>
+            </h2>
+          </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
+          {/* Right: accordion */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
           <Accordion
             type="single"
             collapsible
@@ -102,7 +106,7 @@ export function FAQ() {
                 value={`item-${index}`}
                 className="border-border/40 px-2 data-open:bg-transparent"
               >
-                <AccordionTrigger className="py-4 text-sm font-medium text-foreground hover:no-underline hover:text-mcpl-cyan">
+                <AccordionTrigger className="py-4 text-sm font-medium text-foreground hover:no-underline hover:text-primary">
                   {faq.question}
                 </AccordionTrigger>
                 <AccordionContent className="text-muted-foreground">
@@ -112,6 +116,7 @@ export function FAQ() {
             ))}
           </Accordion>
         </motion.div>
+        </div>
       </div>
     </section>
   )

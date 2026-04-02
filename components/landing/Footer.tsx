@@ -41,20 +41,17 @@ const socialLinks = [
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/[0.06] bg-[var(--mcpl-deep)]">
+    <footer className="border-t border-border bg-background">
       <div className="mx-auto flex max-w-7xl flex-col items-center gap-6 px-6 py-10 md:flex-row md:justify-between">
         {/* Left: Logo + copyright */}
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-0.5 select-none">
-            <span className="text-xl font-bold text-[var(--mcpl-cyan)] font-[family-name:var(--font-heading)]">
-              M
-            </span>
-            <span className="text-sm font-medium text-foreground font-[family-name:var(--font-heading)]">
-              CPLaunch
+            <span className="text-sm font-bold text-foreground">
+              Launch My MCP
             </span>
           </Link>
           <span className="ml-3 text-xs text-muted-foreground/50">
-            &copy; {new Date().getFullYear()} MCPLaunch
+            &copy; {new Date().getFullYear()} Launch My MCP
           </span>
         </div>
 

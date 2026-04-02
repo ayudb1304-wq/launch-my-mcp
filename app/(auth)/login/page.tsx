@@ -50,23 +50,23 @@ export default function LoginPage() {
 
   if (magicLinkSent) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[var(--mcpl-deep)]">
+      <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="mx-auto w-full max-w-sm space-y-6 px-4">
           <div className="space-y-2 text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[var(--mcpl-cyan)]/10">
-              <Mail className="h-6 w-6 text-[var(--mcpl-cyan)]" />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+              <Mail className="h-6 w-6 text-primary" />
             </div>
-            <h1 className="font-heading text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-foreground">
               Check your email
             </h1>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-muted-foreground">
               We sent a magic link to{" "}
-              <span className="text-white">{email}</span>
+              <span className="text-foreground">{email}</span>
             </p>
           </div>
           <Button
             variant="ghost"
-            className="w-full text-gray-400 hover:text-white"
+            className="w-full"
             onClick={() => setMagicLinkSent(false)}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -78,19 +78,16 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[var(--mcpl-deep)]">
+    <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="mx-auto w-full max-w-sm space-y-6 px-4">
         {/* Header */}
         <div className="space-y-2 text-center">
           <Link href="/" className="inline-block">
-            <span className="font-heading text-2xl font-bold text-[var(--mcpl-cyan)]">
-              MCP
-            </span>
-            <span className="font-heading text-2xl font-bold text-white">
-              Launch
+            <span className="text-2xl font-bold text-foreground">
+              Launch My MCP
             </span>
           </Link>
-          <p className="text-sm text-gray-400">
+          <p className="text-sm text-muted-foreground">
             Sign in to start getting discovered by AI
           </p>
         </div>
@@ -99,7 +96,7 @@ export default function LoginPage() {
         <div className="space-y-3">
           <Button
             variant="outline"
-            className="w-full border-gray-700 bg-transparent text-white hover:bg-gray-800"
+            className="w-full"
             onClick={() => handleOAuth("google")}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -125,7 +122,7 @@ export default function LoginPage() {
 
           <Button
             variant="outline"
-            className="w-full border-gray-700 bg-transparent text-white hover:bg-gray-800"
+            className="w-full"
             onClick={() => handleOAuth("github")}
           >
             <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
@@ -138,10 +135,10 @@ export default function LoginPage() {
         {/* Divider */}
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-gray-700" />
+            <span className="w-full border-t border-border" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[var(--mcpl-deep)] px-2 text-gray-500">
+            <span className="bg-background px-2 text-muted-foreground">
               or
             </span>
           </div>
@@ -155,12 +152,11 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="border-gray-700 bg-gray-900/50 text-white placeholder:text-gray-500"
           />
           <Button
             type="submit"
             disabled={loading || !email}
-            className="w-full bg-[var(--mcpl-cyan)] text-black hover:bg-[var(--mcpl-cyan)]/90"
+            className="w-full"
           >
             {loading ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -173,12 +169,12 @@ export default function LoginPage() {
 
         {/* Error */}
         {error && (
-          <p className="text-center text-sm text-red-400">{error}</p>
+          <p className="text-center text-sm text-destructive">{error}</p>
         )}
 
         {/* Back to home */}
-        <p className="text-center text-xs text-gray-500">
-          <Link href="/" className="hover:text-gray-400">
+        <p className="text-center text-xs text-muted-foreground">
+          <Link href="/" className="hover:text-foreground">
             <ArrowLeft className="mr-1 inline h-3 w-3" />
             Back to home
           </Link>

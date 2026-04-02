@@ -45,10 +45,10 @@ interface DiscoveryEvent {
 }
 
 const statusConfig: Record<string, { label: string; className: string }> = {
-  live: { label: "Live", className: "bg-green-500/20 text-green-400" },
-  draft: { label: "Draft", className: "bg-gray-500/20 text-gray-400" },
-  paused: { label: "Paused", className: "bg-yellow-500/20 text-yellow-400" },
-  error: { label: "Error", className: "bg-red-500/20 text-red-400" },
+  live: { label: "Live", className: "bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-400" },
+  draft: { label: "Draft", className: "bg-zinc-50 text-zinc-500 dark:bg-zinc-900 dark:text-zinc-500" },
+  paused: { label: "Paused", className: "bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400" },
+  error: { label: "Error", className: "bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400" },
 };
 
 export function ProjectDetail({
@@ -90,7 +90,7 @@ export function ProjectDetail({
       {/* Breadcrumb */}
       <Link
         href="/dashboard"
-        className="mb-6 inline-flex items-center gap-1 text-sm text-gray-400 hover:text-white"
+        className="mb-6 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Dashboard
@@ -100,17 +100,16 @@ export function ProjectDetail({
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="font-heading text-2xl font-bold text-white">
+            <h1 className="text-2xl font-bold text-foreground">
               {project.name}
             </h1>
             <Badge className={statusInfo.className}>{statusInfo.label}</Badge>
           </div>
-          <p className="mt-1 text-sm text-gray-400">{project.description}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{project.description}</p>
         </div>
         <Button
           variant="outline"
           size="sm"
-          className="border-gray-700 text-gray-400 hover:text-white"
           onClick={toggleStatus}
         >
           {status === "live" ? (
@@ -128,12 +127,12 @@ export function ProjectDetail({
       </div>
 
       {/* MCP URL */}
-      <div className="mt-4 flex items-center gap-2 rounded-lg border border-gray-800 bg-gray-900/50 px-4 py-3">
-        <Server className="h-4 w-4 shrink-0 text-mcpl-cyan" />
-        <code className="flex-1 truncate text-sm text-mcpl-cyan">{mcpUrl}</code>
-        <button onClick={copyUrl} className="text-gray-500 hover:text-white">
+      <div className="mt-4 flex items-center gap-2 rounded-lg bg-card px-4 py-3 ring-1 ring-foreground/10">
+        <Server className="h-4 w-4 shrink-0 text-primary" />
+        <code className="flex-1 truncate text-sm text-primary">{mcpUrl}</code>
+        <button onClick={copyUrl} className="text-muted-foreground hover:text-foreground">
           {copied ? (
-            <Check className="h-4 w-4 text-green-400" />
+            <Check className="h-4 w-4 text-green-600 dark:text-green-400" />
           ) : (
             <Copy className="h-4 w-4" />
           )}
@@ -147,27 +146,27 @@ export function ProjectDetail({
             label: "Discovery Events",
             value: totalEvents.toString(),
             icon: Activity,
-            color: "text-mcpl-cyan",
-            bg: "bg-mcpl-cyan/10",
+            color: "text-blue-600 dark:text-blue-400",
+            bg: "bg-blue-50 dark:bg-blue-950",
           },
           {
             label: "Active Tools",
             value: tools.filter((t) => t.enabled).length.toString(),
             icon: Server,
-            color: "text-mcpl-green",
-            bg: "bg-mcpl-green/10",
+            color: "text-green-600 dark:text-green-400",
+            bg: "bg-green-50 dark:bg-green-950",
           },
           {
             label: "Ad Spend Saved",
             value: `$${adSpendSaved.toLocaleString()}`,
             icon: DollarSign,
-            color: "text-yellow-400",
-            bg: "bg-yellow-400/10",
+            color: "text-amber-600 dark:text-amber-400",
+            bg: "bg-amber-50 dark:bg-amber-950",
           },
         ].map((m) => (
           <div
             key={m.label}
-            className="rounded-lg border border-gray-800 bg-gray-900/50 p-4"
+            className="rounded-lg bg-card p-4 ring-1 ring-foreground/10"
           >
             <div className="flex items-center gap-3">
               <div
@@ -176,42 +175,64 @@ export function ProjectDetail({
                 <m.icon className={`h-5 w-5 ${m.color}`} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{m.value}</p>
-                <p className="text-xs text-gray-400">{m.label}</p>
+                <p className="text-2xl font-bold text-foreground">{m.value}</p>
+                <p className="text-xs text-muted-foreground">{m.label}</p>
               </div>
             </div>
           </div>
         ))}
       </div>
 
+      {/* Connect API placeholder */}
+      <div className="mt-6 rounded-lg border border-dashed border-border bg-muted/50 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-foreground">
+              Want AI assistants to take actions in your product?
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Connect your API so AI can create invoices, book appointments, and more — coming soon.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0"
+            disabled
+          >
+            Connect API
+          </Button>
+        </div>
+      </div>
+
       {/* Two columns: Tools + Events */}
       <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Tools */}
         <div>
-          <h2 className="mb-4 font-heading text-lg font-bold text-white">
+          <h2 className="mb-4 text-lg font-bold text-foreground">
             Tools ({tools.length})
           </h2>
           <div className="space-y-2">
             {tools.map((tool) => (
               <div
                 key={tool.id}
-                className={`rounded-lg border p-3 ${
+                className={`rounded-lg p-3 ring-1 ring-foreground/10 ${
                   tool.enabled
-                    ? "border-gray-800 bg-gray-900/50"
-                    : "border-gray-800/50 bg-gray-900/20 opacity-50"
+                    ? "bg-card"
+                    : "bg-muted/50 opacity-50"
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <code className="text-sm font-medium text-mcpl-cyan">
+                  <code className="text-sm font-medium text-primary">
                     {tool.name}
                   </code>
                   {tool.quality_score && (
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {tool.quality_score}/10
                     </span>
                   )}
                 </div>
-                <p className="mt-1 line-clamp-2 text-xs text-gray-400">
+                <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
                   {tool.description}
                 </p>
               </div>
@@ -221,7 +242,7 @@ export function ProjectDetail({
 
         {/* Discovery Feed */}
         <div>
-          <h2 className="mb-4 font-heading text-lg font-bold text-white">
+          <h2 className="mb-4 text-lg font-bold text-foreground">
             Recent Discovery Events
           </h2>
           <DiscoveryFeed events={events} />

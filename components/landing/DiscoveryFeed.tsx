@@ -51,31 +51,35 @@ export default function DiscoveryFeed() {
 
   return (
     <section ref={sectionRef} id="discovery" className="relative px-6 py-24 md:py-32">
-      <div className="mx-auto max-w-4xl">
-        {/* Headline */}
-        <motion.div
-          className="mb-12 text-center"
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
-            Products being recommended by AI right now
-          </h2>
-          <div className="mx-auto mt-4 h-1 w-20 rounded-full bg-mcpl-cyan/80" />
-        </motion.div>
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start lg:gap-16">
+          {/* Left: headline */}
+          <motion.div
+            className="lg:sticky lg:top-32"
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+              Products being{" "}
+              <span className="text-muted-foreground">recommended by AI right now.</span>
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground">
+              Real-time discovery events from products powered by Launch My MCP.
+            </p>
+          </motion.div>
 
-        {/* Feed card */}
-        <motion.div
-          className="relative mx-auto max-w-2xl overflow-hidden rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-md"
+          {/* Right: feed card */}
+          <motion.div
+            className="relative overflow-hidden rounded-xl border border-border bg-card"
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           {/* Top fade */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-12 bg-gradient-to-b from-[var(--mcpl-deep)] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-12 bg-gradient-to-b from-card to-transparent" />
           {/* Bottom fade */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-[var(--mcpl-deep)] to-transparent" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16 bg-gradient-to-t from-card to-transparent" />
 
           {/* Scrolling container */}
           <div className="h-[280px] overflow-hidden py-4">
@@ -83,12 +87,12 @@ export default function DiscoveryFeed() {
               {loopedEvents.map((event, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-white/[0.02]"
+                  className="flex items-center gap-3 px-5 py-3 transition-colors hover:bg-muted/50"
                 >
                   {/* Pulsing green dot */}
                   <span className="relative flex h-2.5 w-2.5 shrink-0">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--mcpl-green)] opacity-75" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[var(--mcpl-green)]" />
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground opacity-75" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-foreground" />
                   </span>
 
                   {/* Event text */}
@@ -97,7 +101,7 @@ export default function DiscoveryFeed() {
                       {event.client}
                     </span>{" "}
                     used{" "}
-                    <span className="font-mono text-xs text-mcpl-cyan">
+                    <span className="font-mono text-xs text-primary">
                       &quot;{event.tool}&quot;
                     </span>{" "}
                     from{" "}
@@ -116,12 +120,13 @@ export default function DiscoveryFeed() {
           </div>
 
           {/* Bottom label */}
-          <div className="relative z-20 border-t border-white/[0.06] px-5 py-3">
-            <p className="text-center text-xs text-muted-foreground/50">
+          <div className="relative z-20 border-t border-border px-5 py-3">
+            <p className="text-xs text-muted-foreground/50">
               Example events from beta users
             </p>
           </div>
         </motion.div>
+        </div>
       </div>
 
       <style jsx>{`

@@ -16,14 +16,86 @@ import {
   RotateCcw,
   Lock,
   Sparkles,
-  ExternalLink,
+  ChevronDown,
+  ChevronRight,
+  Eye,
 } from "lucide-react";
 import { PLANS, type PlanId } from "@/lib/payments/plans";
 
+const FRIENDLY_NAMES: Record<string, string> = {
+  get_product_overview: "Product Overview",
+  get_pricing: "Pricing & Plans",
+  get_features: "Features",
+  get_use_cases: "Use Cases",
+  get_comparison: "How You Compare",
+  compare_alternatives: "How You Compare",
+  get_integrations: "Integrations",
+};
+
+function getFriendlyName(toolName: string): string {
+  return (
+    FRIENDLY_NAMES[toolName] ??
+    toolName
+      .replace(/^get_/, "")
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase())
+  );
+}
+
+function formatStaticResponse(data: Record<string, unknown>): string {
+  const lines: string[] = [];
+
+  function format(obj: unknown, indent = 0): void {
+    if (Array.isArray(obj)) {
+      for (const item of obj) {
+        if (typeof item === "object" && item !== null) {
+          format(item, indent);
+          lines.push("");
+        } else {
+          lines.push(`${"  ".repeat(indent)}• ${item}`);
+        }
+      }
+    } else if (typeof obj === "object" && obj !== null) {
+      for (const [key, value] of Object.entries(obj)) {
+        const label = key
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase());
+        if (typeof value === "string" || typeof value === "number") {
+          lines.push(`${"  ".repeat(indent)}${label}: ${value}`);
+        } else if (Array.isArray(value) && value.every((v) => typeof v === "string")) {
+          lines.push(`${"  ".repeat(indent)}${label}: ${value.join(", ")}`);
+        } else {
+          lines.push(`${"  ".repeat(indent)}${label}:`);
+          format(value, indent + 1);
+        }
+      }
+    } else {
+      lines.push(`${"  ".repeat(indent)}${obj}`);
+    }
+  }
+
+  format(data);
+  return lines.filter((l) => l.trim()).join("\n");
+}
+
 function QualityBadge({ score }: { score: number }) {
-  if (score >= 8) return <Badge className="bg-green-500/20 text-green-400">Excellent ({score}/10)</Badge>;
-  if (score >= 5) return <Badge className="bg-yellow-500/20 text-yellow-400">Good ({score}/10)</Badge>;
-  return <Badge className="bg-red-500/20 text-red-400">Needs work ({score}/10)</Badge>;
+  if (score >= 8)
+    return (
+      <Badge className="bg-green-50 text-green-600 dark:bg-green-950 dark:text-green-400">
+        Excellent ({score}/10)
+      </Badge>
+    );
+  if (score >= 5)
+    return (
+      <Badge className="bg-amber-50 text-amber-600 dark:bg-amber-950 dark:text-amber-400">
+        Good ({score}/10)
+      </Badge>
+    );
+  return (
+    <Badge className="bg-red-50 text-red-600 dark:bg-red-950 dark:text-red-400">
+      Needs work ({score}/10)
+    </Badge>
+  );
 }
 
 export function StepReview() {
@@ -32,11 +104,23 @@ export function StepReview() {
   const [slugInput, setSlugInput] = useState(store.slug);
   const [editingDesc, setEditingDesc] = useState<number | null>(null);
   const [descInput, setDescInput] = useState("");
+  const [expandedPreviews, setExpandedPreviews] = useState<Set<number>>(
+    new Set(),
+  );
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallPlan, setPaywallPlan] = useState<PlanId>("free");
   const [upgradeLoading, setUpgradeLoading] = useState<string | null>(null);
 
   const enabledCount = store.tools.filter((t) => t.enabled).length;
+
+  function togglePreview(index: number) {
+    setExpandedPreviews((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
+  }
 
   async function handleUpgrade(targetPlan: PlanId) {
     setUpgradeLoading(targetPlan);
@@ -69,12 +153,15 @@ export function StepReview() {
           slug: store.slug,
           description: store.description,
           website_url: store.websiteUrl || undefined,
+          product_metadata: store.productMetadata,
           tools: store.tools.map((t) => ({
             name: t.name,
             description: t.description,
             parameters: t.parameters,
             enabled: t.enabled,
             quality_score: t.quality_score,
+            tool_type: t.tool_type ?? "discovery",
+            static_response: t.static_response,
           })),
         }),
       });
@@ -133,26 +220,24 @@ export function StepReview() {
 
     return (
       <div className="space-y-6">
-        {/* Header */}
         <div className="text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400/10">
-            <Lock className="h-7 w-7 text-yellow-400" />
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-amber-50 dark:bg-amber-950">
+            <Lock className="h-7 w-7 text-amber-600 dark:text-amber-400" />
           </div>
-          <h3 className="font-heading text-xl font-bold text-white">
+          <h3 className="text-xl font-bold text-foreground">
             Upgrade to deploy more servers
           </h3>
-          <p className="mt-2 text-sm text-gray-400">
+          <p className="mt-2 text-sm text-muted-foreground">
             Your {currentPlanInfo.name} plan includes{" "}
-            {currentPlanInfo.limits.maxServers} MCP server
+            {currentPlanInfo.limits.maxServers} AI server
             {currentPlanInfo.limits.maxServers > 1 ? "s" : ""}. Upgrade to
             unlock more.
           </p>
         </div>
 
-        {/* Your tools preview (grayed out) */}
-        <div className="rounded-lg border border-gray-800 bg-gray-900/30 p-4 opacity-50">
-          <p className="mb-2 text-xs font-medium text-gray-500">
-            Your generated tools for {store.name}
+        <div className="rounded-lg border border-border bg-muted/50 p-4 opacity-50">
+          <p className="mb-2 text-xs font-medium text-muted-foreground">
+            Your AI profile for {store.name}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {store.tools
@@ -160,38 +245,37 @@ export function StepReview() {
               .map((t) => (
                 <span
                   key={t.name}
-                  className="rounded bg-gray-800 px-2 py-1 text-xs text-gray-400"
+                  className="rounded bg-muted px-2 py-1 text-xs text-muted-foreground"
                 >
-                  {t.name}
+                  {getFriendlyName(t.name)}
                 </span>
               ))}
           </div>
         </div>
 
-        {/* Upgrade cards */}
         <div className="space-y-3">
           {upgradePlans.map(([id, plan]) => (
             <div
               key={id}
-              className={`rounded-lg border p-5 ${
+              className={`rounded-lg p-5 ring-1 ${
                 id === "starter"
-                  ? "border-mcpl-cyan/30 bg-mcpl-cyan/5"
-                  : "border-gray-800 bg-gray-900/50"
+                  ? "bg-primary/5 ring-primary/30"
+                  : "bg-card ring-foreground/10"
               }`}
             >
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-heading text-lg font-bold text-white">
+                  <h4 className="text-lg font-bold text-foreground">
                     {plan.name}
                   </h4>
                   <div className="mt-1 flex items-baseline gap-1">
-                    <span className="text-xl font-bold text-white">
+                    <span className="text-xl font-bold text-foreground">
                       {plan.price}
                     </span>
-                    <span className="text-sm text-gray-400">{plan.period}</span>
+                    <span className="text-sm text-muted-foreground">{plan.period}</span>
                   </div>
-                  <p className="mt-1 text-xs text-gray-400">
-                    {plan.limits.maxServers} MCP servers &middot;{" "}
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    {plan.limits.maxServers} AI servers &middot;{" "}
                     {plan.limits.maxEventsPerMonth === -1
                       ? "Unlimited"
                       : plan.limits.maxEventsPerMonth.toLocaleString()}{" "}
@@ -201,8 +285,8 @@ export function StepReview() {
                 <Button
                   className={
                     id === "starter"
-                      ? "bg-mcpl-cyan text-mcpl-deep hover:bg-mcpl-cyan/90"
-                      : "bg-white/10 text-white hover:bg-white/20"
+                      ? ""
+                      : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                   }
                   disabled={upgradeLoading !== null}
                   onClick={() => handleUpgrade(id)}
@@ -219,10 +303,9 @@ export function StepReview() {
           ))}
         </div>
 
-        {/* Back button */}
         <Button
           variant="ghost"
-          className="w-full text-gray-400 hover:text-white"
+          className="w-full"
           onClick={() => setShowPaywall(false)}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
@@ -236,22 +319,25 @@ export function StepReview() {
     <div className="space-y-6">
       {/* Slug / Server URL */}
       <div className="space-y-2">
-        <label className="flex items-center gap-2 text-sm font-medium text-white">
-          MCP Server URL
-          <FieldTooltip text="This is the unique URL where your MCP server will live. AI assistants will use this URL to discover and call your product's tools. Choose something short and memorable." />
+        <label className="flex items-center gap-2 text-sm font-medium text-foreground">
+          Your AI Server URL
+          <FieldTooltip text="This is the unique URL where your AI profile lives. AI assistants use this URL to discover and learn about your product." />
         </label>
-        <div className="flex items-center gap-2 rounded-lg border border-gray-700 bg-gray-900/50 px-3 py-2">
-          <span className="text-sm text-gray-500">mcplaunch.io/mcp/</span>
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-3 py-2">
+          <span className="text-sm text-muted-foreground">launchmymcp.com/mcp/</span>
           {editingSlug ? (
             <div className="flex flex-1 items-center gap-2">
               <Input
                 value={slugInput}
                 onChange={(e) => setSlugInput(e.target.value)}
-                className="h-7 border-gray-600 bg-gray-800 px-2 text-sm text-white"
+                className="h-7 px-2 text-sm"
                 autoFocus
                 onKeyDown={(e) => e.key === "Enter" && saveSlug()}
               />
-              <button onClick={saveSlug} className="text-green-400 hover:text-green-300">
+              <button
+                onClick={saveSlug}
+                className="text-green-600 hover:text-green-500 dark:text-green-400"
+              >
                 <Check className="h-4 w-4" />
               </button>
               <button
@@ -259,19 +345,19 @@ export function StepReview() {
                   setEditingSlug(false);
                   setSlugInput(store.slug);
                 }}
-                className="text-gray-400 hover:text-gray-300"
+                className="text-muted-foreground hover:text-foreground"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
           ) : (
             <div className="flex flex-1 items-center gap-2">
-              <span className="text-sm font-medium text-mcpl-cyan">
+              <span className="text-sm font-medium text-primary">
                 {store.slug}
               </span>
               <button
                 onClick={() => setEditingSlug(true)}
-                className="text-gray-500 hover:text-gray-300"
+                className="text-muted-foreground hover:text-foreground"
               >
                 <Pencil className="h-3 w-3" />
               </button>
@@ -283,114 +369,140 @@ export function StepReview() {
       {/* Tools List */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm font-medium text-white">
-            Generated Tools ({enabledCount} enabled)
-            <FieldTooltip text="These are the actions AI assistants can perform using your product. Toggle off any tools you don't want. You can edit descriptions to make them clearer." />
+          <label className="flex items-center gap-2 text-sm font-medium text-foreground">
+            Your AI Discovery Profile ({enabledCount} active)
+            <FieldTooltip text="Each card is a question AI assistants can now answer about your product. Toggle off any you don't want, or expand to preview the response." />
           </label>
           <button
-            onClick={() => {
-              store.setStep("describe");
-            }}
-            className="flex items-center gap-1 text-xs text-gray-400 hover:text-gray-300"
+            onClick={() => store.setStep("describe")}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
           >
             <RotateCcw className="h-3 w-3" />
-            Regenerate
+            Start over
           </button>
         </div>
 
         {store.tools.map((tool, i) => (
           <div
             key={i}
-            className={`rounded-lg border p-4 transition-colors ${
+            className={`rounded-lg ring-1 transition-colors ${
               tool.enabled
-                ? "border-gray-700 bg-gray-900/50"
-                : "border-gray-800 bg-gray-900/20 opacity-50"
+                ? "bg-card ring-foreground/10"
+                : "bg-muted/50 ring-foreground/5 opacity-50"
             }`}
           >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 space-y-1">
-                <div className="flex items-center gap-2">
-                  <code className="text-sm font-medium text-mcpl-cyan">
-                    {tool.name}
-                  </code>
-                  <QualityBadge score={tool.quality_score} />
+            <div className="p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex-1 space-y-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-sm font-medium text-foreground">
+                      {getFriendlyName(tool.name)}
+                    </span>
+                    <code className="text-[10px] text-muted-foreground">
+                      {tool.name}
+                    </code>
+                    <Badge className="bg-muted text-muted-foreground text-[10px] px-1.5 py-0">
+                      Discovery Tool
+                    </Badge>
+                    <QualityBadge score={tool.quality_score} />
+                  </div>
+
+                  {editingDesc === i ? (
+                    <div className="flex items-start gap-2">
+                      <textarea
+                        value={descInput}
+                        onChange={(e) => setDescInput(e.target.value)}
+                        rows={2}
+                        className="flex-1 rounded border border-border bg-muted px-2 py-1 text-sm text-foreground"
+                        autoFocus
+                      />
+                      <button
+                        onClick={() => saveDesc(i)}
+                        className="mt-1 text-green-600 hover:text-green-500 dark:text-green-400"
+                      >
+                        <Check className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setEditingDesc(null)}
+                        className="mt-1 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <p
+                      className="group cursor-pointer text-sm text-muted-foreground"
+                      onClick={() => startEditDesc(i)}
+                    >
+                      {tool.description}
+                      <Pencil className="ml-1 inline h-3 w-3 opacity-0 group-hover:opacity-100" />
+                    </p>
+                  )}
                 </div>
 
-                {editingDesc === i ? (
-                  <div className="flex items-start gap-2">
-                    <textarea
-                      value={descInput}
-                      onChange={(e) => setDescInput(e.target.value)}
-                      rows={2}
-                      className="flex-1 rounded border border-gray-600 bg-gray-800 px-2 py-1 text-sm text-white"
-                      autoFocus
-                    />
-                    <button
-                      onClick={() => saveDesc(i)}
-                      className="mt-1 text-green-400 hover:text-green-300"
-                    >
-                      <Check className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => setEditingDesc(null)}
-                      className="mt-1 text-gray-400 hover:text-gray-300"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <p
-                    className="group cursor-pointer text-sm text-gray-400"
-                    onClick={() => startEditDesc(i)}
-                  >
-                    {tool.description}
-                    <Pencil className="ml-1 inline h-3 w-3 opacity-0 group-hover:opacity-100" />
-                  </p>
-                )}
-
-                {/* Parameters */}
-                {tool.parameters.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {tool.parameters.map((p) => (
-                      <span
-                        key={p.name}
-                        className="rounded bg-gray-800 px-2 py-0.5 text-xs text-gray-400"
-                      >
-                        {p.name}
-                        <span className="ml-1 text-gray-600">
-                          {p.type}
-                          {p.required ? "" : "?"}
-                        </span>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                {/* Toggle */}
+                <button
+                  onClick={() => store.toggleTool(i)}
+                  className={`mt-1 rounded-full p-1 transition-colors ${
+                    tool.enabled
+                      ? "bg-primary/20 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {tool.enabled ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <X className="h-4 w-4" />
+                  )}
+                </button>
               </div>
 
-              {/* Toggle */}
-              <button
-                onClick={() => store.toggleTool(i)}
-                className={`mt-1 rounded-full p-1 transition-colors ${
-                  tool.enabled
-                    ? "bg-mcpl-cyan/20 text-mcpl-cyan"
-                    : "bg-gray-800 text-gray-600"
-                }`}
-              >
-                {tool.enabled ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <X className="h-4 w-4" />
-                )}
-              </button>
+              {/* Preview toggle */}
+              {tool.enabled && tool.static_response && (
+                <button
+                  onClick={() => togglePreview(i)}
+                  className="mt-2 flex items-center gap-1 text-xs text-primary hover:text-primary/80"
+                >
+                  <Eye className="h-3 w-3" />
+                  Preview what AI will say
+                  {expandedPreviews.has(i) ? (
+                    <ChevronDown className="h-3 w-3" />
+                  ) : (
+                    <ChevronRight className="h-3 w-3" />
+                  )}
+                </button>
+              )}
             </div>
+
+            {/* Expanded preview */}
+            {expandedPreviews.has(i) && tool.static_response && (
+              <div className="border-t border-border bg-muted/50 px-4 py-3">
+                <p className="mb-2 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                  When someone asks about this, AI will respond with:
+                </p>
+                <pre className="whitespace-pre-wrap text-xs leading-relaxed text-foreground/80">
+                  {formatStaticResponse(
+                    tool.static_response as Record<string, unknown>,
+                  )}
+                </pre>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
+      {/* Bottom banner */}
+      <div className="rounded-lg border border-border bg-muted/50 px-4 py-3">
+        <p className="text-xs text-muted-foreground">
+          Want AI to actually do things inside your product (like create
+          invoices)? You can connect your API later from the dashboard.
+        </p>
+      </div>
+
       {/* Error */}
       {store.saveError && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3">
-          <p className="text-sm text-red-400">{store.saveError}</p>
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3">
+          <p className="text-sm text-destructive">{store.saveError}</p>
         </div>
       )}
 
@@ -398,25 +510,24 @@ export function StepReview() {
       <div className="flex gap-3">
         <Button
           variant="outline"
-          className="border-gray-700 text-gray-400 hover:text-white"
-          onClick={() => store.setStep("describe")}
+          onClick={() => store.setStep("details")}
         >
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back
         </Button>
         <Button
-          className="flex-1 bg-mcpl-cyan text-mcpl-deep hover:bg-mcpl-cyan/90"
+          className="flex-1"
           disabled={enabledCount === 0 || store.isSaving}
           onClick={handleSave}
         >
           {store.isSaving ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Creating project...
+              Creating your AI profile...
             </>
           ) : (
             <>
-              Deploy MCP Server
+              Launch my AI profile
               <ArrowRight className="ml-2 h-4 w-4" />
             </>
           )}

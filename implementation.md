@@ -222,12 +222,49 @@
 
 ---
 
-## Phase 7: Email Sequences & Notifications
+## Phase 7: Discovery Tools (Non-API MCP Servers)
+
+**Goal:** MCP servers return real structured product data instead of stubs. Non-technical founders can launch without an API.
+**Depends on:** Phase 6 complete
+**Design decisions:** Live preview panel on Step 2, Framer Motion cinematic transitions, chat bubble animation on success, speed-first UX.
+
+### 7.1 Database Migration
+- [x] New migration in `supabase/migrations/` — alter `mcp_projects`: make `api_base_url` nullable, add `product_website`, `product_metadata` JSONB, `server_mode` TEXT
+- [x] Alter `mcp_tools`: add `tool_type`, `static_response` JSONB, make `endpoint_path` and `http_method` nullable
+
+### 7.2 Onboarding Store Update
+- [x] `lib/onboard-store.ts` — add `productMetadata` (pricing_plans, key_features, use_cases, target_audience, differentiators, integrations) to zustand store
+
+### 7.3 Onboarding Wizard Restructure (3 → 4 steps with narrative)
+- [x] `components/onboard/StepDescribe.tsx` — remove `api_base_url`, add `product_website`, new narrative copy ("Let's introduce your product to AI")
+- [x] `components/onboard/StepProductDetails.tsx` — NEW: structured metadata form with live AI preview panel (split-screen), "why AI cares" tooltips, AI readiness bar
+- [x] `components/onboard/StepTransition.tsx` — NEW: reusable Framer Motion animated transition between steps (typing/morphing effects, 1-1.5s max)
+- [x] `components/onboard/OnboardWizard.tsx` — add Step 2, narrative progress labels (Describe → Teach → Review → Launch), integrate StepTransition between steps
+- [x] `components/onboard/StepReview.tsx` — friendly tool names ("Pricing & Plans" not "get_pricing"), expandable "Preview what AI will say", tool_type badges, editable static_response
+- [x] `components/onboard/StepDeploy.tsx` — rewritten copy (no MCP jargon), chat bubble animation on success using real user data, share tweet
+
+### 7.4 AI Generation & API Updates
+- [x] `lib/mcp/generator.ts` — new system prompt for discovery tools (returns static_response, not action stubs)
+- [x] `app/api/onboard/analyze/route.ts` — pass product metadata to generator, expect discovery tools back
+- [x] `app/api/onboard/save/route.ts` — save `product_website`, `product_metadata`, `tool_type`, `static_response`, set `server_mode` to 'discovery'
+
+### 7.5 MCP Server Handler
+- [x] `app/api/mcp/[slug]/[transport]/route.ts` — return `static_response` for discovery tools instead of stub
+
+### 7.6 Dashboard Placeholder
+- [x] Add "Connect your API" placeholder card on project detail page (links to future connect-api page)
+
+### Phase 7 Deliverable
+> Users complete a 4-step narrative onboarding (Describe → Teach → Review → Launch). MCP servers return real product data. No API key or technical knowledge required. Live preview shows AI responses as users type.
+
+---
+
+## Phase 8: Email Sequences & Notifications
 
 **Goal:** Transactional and lifecycle emails via Resend.
-**Depends on:** Phase 5 complete (can run parallel with Phase 6)
+**Depends on:** Phase 5 complete (can run parallel with Phase 7)
 
-### 7.1 Email Templates
+### 8.1 Email Templates
 - [ ] `lib/email/resend.ts` — Resend client + send helpers
 - [ ] Welcome email (on signup)
 - [ ] MCP Live email (on deployment)
@@ -236,68 +273,183 @@
 - [ ] Usage limit warning (80% of plan limit)
 - [ ] Upgrade nudge (10 events on free plan)
 
-### 7.2 Automated Sequences
+### 8.2 Automated Sequences
 - [ ] Day 1: Tool description tips
 - [ ] Day 3: Weekly stats
 - [ ] Day 7: AI discovery growth tips
 
-### Phase 7 Deliverable
+### Phase 8 Deliverable
 > Automated transactional and lifecycle emails for key user moments.
 
 ---
 
-## Phase 8: Registry Submission & SEO
+## Phase 9: Registry Submission & SEO
 
 **Goal:** Auto-submit MCP servers to registries + programmatic SEO pages.
 **Depends on:** Phase 4 complete
 
-### 8.1 Registry Integration
+### 9.1 Registry Integration
 - [ ] `lib/registries/smithery.ts` — Smithery API submission
 - [ ] `app/api/registries/submit/[projectId]/route.ts` — Submit endpoint
 - [ ] Registry status tracking in dashboard
 
-### 8.2 Programmatic SEO Pages
+### 9.2 Programmatic SEO Pages
 - [ ] `app/(marketing)/mcp-server-for/[integration]/page.tsx` — 50+ integration pages
 - [ ] `app/(marketing)/how-to-get-discovered-by/[ai-assistant]/page.tsx`
 - [ ] `generateStaticParams` for build-time generation
 - [ ] Internal linking between SEO pages
 
-### 8.3 Blog
+### 9.3 Blog
 - [ ] `app/(marketing)/blog/page.tsx` — Blog index
 - [ ] `app/(marketing)/blog/[slug]/page.tsx` — Blog post template
 - [ ] First 2-3 AEO-optimized posts
 
-### Phase 8 Deliverable
+### Phase 9 Deliverable
 > MCP servers auto-submitted to Smithery, programmatic SEO pages live, blog launched.
 
 ---
 
-## Phase 9: Polish & Launch Prep
+## Phase 10: Polish & Launch Prep
 
 **Goal:** Production-ready for public launch.
-**Depends on:** Phases 1-7 complete
+**Depends on:** Phases 1-8 complete
 
-### 9.1 Production Hardening
+### 10.1 Production Hardening
 - [ ] Error monitoring (Sentry)
 - [ ] Rate limiting on all public endpoints
 - [ ] API key encryption audit
 - [ ] Security review (OWASP top 10)
 - [ ] Performance optimization (Core Web Vitals)
 
-### 9.2 Launch Assets
+### 10.2 Launch Assets
 - [ ] OG image design
 - [ ] Product Hunt listing prep
 - [ ] X/Twitter launch thread draft
 - [ ] Demo video (60s)
 
-### 9.3 Launch Day
+### 10.3 Launch Day
 - [ ] Product Hunt submission
 - [ ] X post with demo video
 - [ ] Indie Hackers "Show IH" post
 - [ ] Dogfood: submit MCPLaunch's own MCP server to Smithery
 
-### Phase 9 Deliverable
+### Phase 10 Deliverable
 > Public launch on Product Hunt + social channels with a polished, production-ready product.
+
+---
+
+## Phase 11: Theme Revamp (InvoiceCop Design System)
+
+**Goal:** Revamp the entire app's look and feel to match the InvoiceCop design language — clean, professional, light-first — while keeping every feature intact.
+**Reference:** `themerevamp.md`
+**Depends on:** Independent — can run in parallel with any phase
+**Rule:** Zero functional changes. Only visual/styling updates. All features, routes, state, and logic remain untouched.
+
+### What Changes
+
+| Aspect | Current (MCPLaunch) | Target (InvoiceCop) |
+|---|---|---|
+| Fonts | DM Sans / Space Mono / JetBrains Mono | Manrope / Geist Mono |
+| Color model | HSL hex (#00E5FF, #050A14) | OKLCH perceptual color space |
+| Theme | Dark-only (forced) | Light default + dark mode (system-aware) |
+| Primary color | Cyan (#00E5FF) | Purple/Violet (oklch 0.491 0.27 292.581) |
+| Background | Animated gradient navy (#050A14) | Clean white (light) / near-black (dark) |
+| Card style | Semi-transparent gray (`bg-gray-900/50`) | Solid `bg-card` with subtle `ring-1 ring-foreground/10` |
+| Buttons | Custom cyan/gray, varied sizes | Standardized 7 variants × 8 sizes (shadcn Mira) |
+| Typography | Mixed, heading font in mono | Clean hierarchy: 2xl→sm→xs with Manrope |
+| Animations | Heavy Framer Motion (stagger, scroll) | Subtle 100ms transitions, zoom-in dialogs |
+| Vibe | Sci-fi / hacker / neon | Professional / clean / "Notion meets Linear" |
+
+---
+
+### 11.1 Design Foundation (do first — everything else depends on this)
+
+- [x] **Fonts**: Replace DM Sans → Manrope, JetBrains Mono → Geist Mono in `app/layout.tsx`. Remove Space Mono. Update CSS variables `--font-sans`, `--font-mono`. Remove `--font-heading`.
+- [x] **Color palette**: Rewrite `app/globals.css` — replace all HSL hex values with OKLCH tokens from `themerevamp.md`. Define both `:root` (light) and `.dark` (dark) variable sets.
+- [x] **Remove custom brand colors**: Delete `--mcpl-cyan`, `--mcpl-green`, `--mcpl-navy`, `--mcpl-deep` variables and all references across codebase.
+- [x] **Remove animated background**: Delete the gradient keyframe animation and grid overlay from `body` in `globals.css`. Replace with clean `bg-background`.
+- [x] **Border radius tokens**: Update `--radius` scale to match themerevamp.md values (already close, verify).
+- [x] **Chart colors**: Replace cyan/green chart palette with olive/green OKLCH chart tokens.
+- [x] **Sidebar colors**: Replace `--sidebar-*` variables with new palette equivalents.
+- [x] **Theme provider**: Update `app/layout.tsx` to remove forced `dark` class. Ensure `ThemeProvider` uses `defaultTheme="system"` with `enableSystem`. Both light and dark modes must work.
+
+### 11.2 UI Component Library (shadcn/ui restyling)
+
+- [x] **Button** (`components/ui/button.tsx`): Update all variant colors — default uses `bg-primary`, hover uses `/80` opacity. Add `active:translate-y-px` press effect. Ensure all 8 sizes match themerevamp spec.
+- [x] **Card** (`components/ui/card.tsx`): Replace `border-gray-800` / `bg-gray-900/50` with `bg-card` + `ring-1 ring-foreground/10`. Remove any transparency.
+- [x] **Badge** (`components/ui/badge.tsx`): Ensure pill shape (`rounded-full`), `h-5`, `text-[0.625rem]`. Verify all variants.
+- [x] **Input** (`components/ui/input.tsx`): Update to `h-7`, `bg-input/20 dark:bg-input/30`, new focus ring (`focus-visible:ring-2 focus-visible:ring-ring/30`).
+- [x] **Textarea** (`components/ui/textarea.tsx`): Match input styling with consistent border, background, and focus states.
+- [x] **Accordion** (`components/ui/accordion.tsx`): Verify border and hover colors use new tokens.
+- [x] **Sheet** (`components/ui/sheet.tsx`): Update overlay backdrop, entry/exit animations to `zoom-in-95`/`zoom-out-95`.
+- [x] **Tooltip** (`components/ui/tooltip.tsx`): Update to `shadow-xl` with new background tokens.
+- [x] **Progress** (`components/ui/progress.tsx`): Update track and fill colors to new palette.
+- [x] **Separator** (`components/ui/separator.tsx`): Use `bg-border` token.
+
+### 11.3 Landing Page
+
+All sections keep their content, copy, and functionality. Only visual treatment changes.
+
+- [x] **Navbar** (`components/landing/Navbar.tsx`): Replace cyan/navy colors with purple primary. Sticky header with `backdrop-blur-md`. Logo text color to `text-primary`. CTA button to `bg-primary text-primary-foreground`. Remove neon glow effects.
+- [x] **Hero** (`components/landing/Hero.tsx`): Replace cyan-to-green gradient text with purple-based gradient. Update terminal animation colors (green text → muted-foreground, dark bg → card bg). Replace sci-fi background effects with clean layout. Keep typewriter animation but with new palette.
+- [x] **LiveDemo** (`components/landing/LiveDemo.tsx`): Update form styling to new input/button tokens. Replace cyan accents with primary purple. Update result cards to new card style. Keep all interactive functionality.
+- [x] **HowItWorks** (`components/landing/HowItWorks.tsx`): Update step cards to new card style. Replace chevron/icon colors. Keep equal-height layout and content.
+- [x] **ProblemSection** (`components/landing/ProblemSection.tsx`): Update comparison card backgrounds and accent colors. Keep before/after content.
+- [x] **DiscoveryFeed** (`components/landing/DiscoveryFeed.tsx`): Update ticker styling to new palette. Replace cyan pulse effects with subtle `animate-pulse` on status dots. Keep auto-scroll.
+- [x] **Pricing** (`components/landing/Pricing.tsx`): Replace cyan border/shadow on highlighted plan with `border-primary` + `shadow-md`. Update all card backgrounds and text colors. Keep tier content and CTAs.
+- [x] **FAQ** (`components/landing/FAQ.tsx`): Update accordion hover/active colors to primary. Keep JSON-LD schema and all Q&A content.
+- [x] **CTAFooter** (`components/landing/CTAFooter.tsx`): Update background and CTA button to new palette. Keep copy.
+- [x] **Footer** (`components/landing/Footer.tsx`): Update link colors and background. Keep all links and content.
+- [x] **Background** (`app/page.tsx`): Remove `bg-[var(--mcpl-deep)]`. Use clean `bg-background`.
+- [x] **Tone down Framer Motion**: Reduce heavy stagger/scroll animations to subtle `transition-all duration-100` or light fade-ins. Keep layout animations where they add clarity (e.g., accordion open/close).
+
+### 11.4 Auth Pages
+
+- [x] **Login** (`app/(auth)/login/page.tsx`): Replace dark navy background with `bg-background`. Update form card to new card style. Replace cyan accents on OAuth buttons and magic link input with primary purple. Keep all auth logic intact.
+
+### 11.5 App Shell & Navigation
+
+- [x] **AppShell** (`components/app/AppShell.tsx`): Replace `bg-[var(--mcpl-deep)]` with `bg-background`. Update layout structure to match: sticky header + `flex-1` main content area.
+- [x] **Sidebar** (`components/app/Sidebar.tsx`): Replace `bg-[var(--mcpl-navy)]` with `bg-card` or `bg-sidebar`. Replace cyan active states (`bg-[var(--mcpl-cyan)]/10 text-[var(--mcpl-cyan)]`) with `bg-primary/10 text-primary`. Update nav item hover to `bg-muted`. Update all hardcoded gray/navy colors. Keep navigation items, project list, and sign-out.
+- [x] **Mobile sidebar**: Update Sheet trigger and overlay colors. Keep hamburger menu behavior.
+
+### 11.6 Dashboard
+
+- [x] **Dashboard page** (`app/(app)/dashboard/page.tsx`): Replace any hardcoded background colors with tokens. Keep redirect logic and data fetching.
+- [x] **MetricsBar** (`components/dashboard/MetricsBar.tsx`): Replace colored icon backgrounds (cyan/green/yellow) with semantic status colors from themerevamp (blue/green/amber). Replace `border-gray-800` with `border-border`. Keep metric calculations.
+- [x] **MCPServerCard** (`components/dashboard/MCPServerCard.tsx`): Restyle to new card treatment (`bg-card`, `ring-1 ring-foreground/10`). Update status badges to semantic colors (Live→green, Draft→zinc, Paused→amber, Error→red per themerevamp). Replace code block styling. Keep copy button, stats, and navigation.
+- [x] **ProjectDetail** (`components/dashboard/ProjectDetail.tsx`): Update all card containers, tool list styling, event feed colors. Replace cyan/green accents with primary/semantic colors. Keep pause/resume, tool display, and event data.
+- [x] **DiscoveryFeed** (`components/dashboard/DiscoveryFeed.tsx`): Update event row styling to new palette. Keep AI client detection and event data.
+
+### 11.7 Onboarding Wizard
+
+- [x] **OnboardWizard** (`components/onboard/OnboardWizard.tsx`): Update progress indicator colors — active step uses `bg-primary`, completed uses `bg-primary`, inactive uses `bg-muted`. Replace connecting line colors. Update step labels typography to new hierarchy. Keep step logic and transitions.
+- [x] **StepDescribe** (`components/onboard/StepDescribe.tsx`): Update form inputs to new input style. Replace error text colors with `text-destructive`. Update character counter styling. Keep validation and field tooltips.
+- [x] **StepProductDetails** (`components/onboard/StepProductDetails.tsx`): Update form styling and preview panel to new palette. Keep all metadata fields and AI preview functionality.
+- [x] **StepReview** (`components/onboard/StepReview.tsx`): Update tool cards to new card style. Replace badge colors with semantic variants. Keep edit/toggle/delete functionality and all tool data display.
+- [x] **StepDeploy** (`components/onboard/StepDeploy.tsx`): Update deployment progress animation colors. Replace success state styling (green/cyan → primary). Keep deploy logic and animated progress.
+- [x] **StepTransition** (`components/onboard/StepTransition.tsx`): Update animation colors to new palette. Keep transition messaging and timing.
+- [x] **GeneratingOverlay** (`components/onboard/GeneratingOverlay.tsx`): Update overlay background and spinner colors. Keep loading state logic.
+- [x] **FieldTooltip** (`components/onboard/FieldTooltip.tsx`): Update tooltip to new `shadow-xl` style with updated background. Keep tooltip content.
+
+### 11.8 Settings
+
+- [x] **SettingsContent** (`components/app/SettingsContent.tsx`): Update plan badge colors (Free→zinc, Starter→primary, Pro→green per semantic status colors). Update upgrade card styling to new card treatment. Replace cyan/green pricing accents with primary. Keep all plan data, upgrade logic, and account info.
+
+### 11.9 Final QA Pass
+
+- [x] Grep for any remaining hardcoded colors: `#00E5FF`, `#39FF14`, `#050A14`, `#0D1526`, `mcpl-cyan`, `mcpl-green`, `mcpl-navy`, `mcpl-deep`, `gray-800`, `gray-900`, `gray-700` — replace all with design tokens.
+- [x] Grep for `bg-\[var\(--mcpl` and `text-\[var\(--mcpl` — zero remaining references.
+- [ ] Test light mode end-to-end on every page (currently untested since app was dark-only).
+- [ ] Test dark mode end-to-end on every page.
+- [ ] Test keyboard theme toggle ("D" key).
+- [ ] Verify all Framer Motion animations still work (reduced but functional).
+- [ ] Verify mobile responsive layouts on all pages.
+- [ ] Verify focus states, error states, disabled states across all interactive elements.
+- [ ] Verify status badges render correctly in both themes (dashboard, onboard).
+
+### Phase 11 Deliverable
+> Every page matches the InvoiceCop design language: Manrope font, OKLCH purple palette, light-first with dark mode, clean card surfaces, subtle animations. All features remain fully functional. Zero regressions.
 
 ---
 
@@ -322,6 +474,8 @@
 | 4. MCP Server Hosting | Complete | 2026-04-02 | 2026-04-02 |
 | 5. Dashboard & Analytics | Complete | 2026-04-02 | 2026-04-02 |
 | 6. Payments (Dodo) | Complete | 2026-04-02 | 2026-04-02 |
-| 7. Email Sequences | Not Started | — | — |
-| 8. Registry & SEO | Not Started | — | — |
-| 9. Polish & Launch | Not Started | — | — |
+| 7. Discovery Tools | Complete | 2026-04-02 | 2026-04-02 |
+| 8. Email Sequences | Not Started | — | — |
+| 9. Registry & SEO | Not Started | — | — |
+| 10. Polish & Launch | Not Started | — | — |
+| 11. Theme Revamp | Complete | 2026-04-02 | 2026-04-02 |

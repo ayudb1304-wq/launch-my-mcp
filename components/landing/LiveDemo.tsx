@@ -99,7 +99,7 @@ function useTypewriter(text: string, speed = 20, enabled = false) {
 
 function StepIndicator({ step, total }: { step: number; total: number }) {
   return (
-    <span className="font-mono text-[0.65rem] tracking-[0.2em] text-mcpl-cyan/70 uppercase">
+    <span className="font-mono text-[0.65rem] tracking-[0.2em] text-primary/70 uppercase">
       Step {step} of {total}
     </span>
   );
@@ -130,10 +130,10 @@ function LoadingStep({
             animate={{ scale: 1 }}
             transition={{ type: "spring", stiffness: 400, damping: 15 }}
           >
-            <Check className="h-4 w-4 text-mcpl-green" />
+            <Check className="h-4 w-4 text-foreground" />
           </motion.div>
         ) : active ? (
-          <Loader2 className="h-4 w-4 animate-spin text-mcpl-cyan" />
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
         ) : (
           <Circle className="h-3 w-3 text-muted-foreground/40" />
         )}
@@ -141,7 +141,7 @@ function LoadingStep({
       <span
         className={`font-mono text-sm ${
           complete
-            ? "text-mcpl-green"
+            ? "text-foreground"
             : active
               ? "text-foreground"
               : "text-muted-foreground/50"
@@ -301,34 +301,33 @@ export default function LiveDemo() {
       id="live-demo"
       className="relative px-6 py-24 md:py-32"
     >
-{/* removed radial glow — was creating blue bleed behind card */}
+      <div className="mx-auto max-w-7xl">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-start lg:gap-16">
+          {/* Left: headline */}
+          <motion.div
+            className="lg:sticky lg:top-32"
+            initial={{ opacity: 0, y: 24 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
+              See it work.{" "}
+              <span className="text-muted-foreground">Right now, with your product.</span>
+            </h2>
+            <p className="mt-4 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base">
+              No signup needed. Just describe your product and see how AI
+              assistants would recommend it to their users.
+            </p>
+          </motion.div>
 
-      <div className="mx-auto max-w-3xl">
-        {/* Section headline */}
-        <motion.div
-          className="mb-12 text-center"
-          initial={{ opacity: 0, y: 24 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="font-heading text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl">
-            See it work. Right now.{" "}
-            <span className="text-mcpl-cyan">With YOUR product.</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
-            No signup needed. Just describe your product and see how AI
-            assistants would recommend it to their users.
-          </p>
-        </motion.div>
-
-        {/* Main card */}
-        <motion.div
-          className="relative rounded-2xl"
-          initial={{ opacity: 0, y: 32 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.7, delay: 0.15 }}
-        >
-          <div className="rounded-2xl border border-white/[0.1] bg-white/[0.03] p-6 backdrop-blur-xl md:p-8">
+          {/* Right: interactive card */}
+          <motion.div
+            className="relative rounded-2xl"
+            initial={{ opacity: 0, y: 32 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.15 }}
+          >
+            <div className="rounded-2xl border border-border bg-card p-6 shadow-sm md:p-8">
             <AnimatePresence mode="wait">
               {/* ============== STATE 1: INPUT ============== */}
               {demoState === "input" && (
@@ -356,7 +355,7 @@ export default function LiveDemo() {
                       <Textarea
                         id="description"
                         placeholder="e.g. An API that lets users search, book, and manage travel accommodations worldwide..."
-                        className={`min-h-24 border-white/[0.1] bg-white/[0.04] text-sm focus-visible:border-mcpl-cyan/50 focus-visible:ring-mcpl-cyan/20 ${
+                        className={`min-h-24 text-sm ${
                           errors.description ? "border-destructive/50" : ""
                         }`}
                         {...register("description")}
@@ -372,7 +371,7 @@ export default function LiveDemo() {
                         <span
                           className={`text-xs ${
                             (descriptionValue?.length ?? 0) >= 20
-                              ? "text-mcpl-green/70"
+                              ? "text-foreground"
                               : "text-muted-foreground/50"
                           }`}
                         >
@@ -394,7 +393,7 @@ export default function LiveDemo() {
                         id="api_base_url"
                         type="url"
                         placeholder="https://api.yourproduct.com/v1"
-                        className={`border-white/[0.1] bg-white/[0.04] text-sm focus-visible:border-mcpl-cyan/50 focus-visible:ring-mcpl-cyan/20 ${
+                        className={`text-sm ${
                           errors.api_base_url ? "border-destructive/50" : ""
                         }`}
                         {...register("api_base_url")}
@@ -412,7 +411,7 @@ export default function LiveDemo() {
                         type="submit"
                         size="lg"
                         disabled={!isValid || isSubmitting}
-                        className="h-10 cursor-pointer gap-2 bg-mcpl-cyan px-5 text-sm font-semibold text-mcpl-deep hover:bg-mcpl-cyan/85 disabled:cursor-not-allowed disabled:opacity-50"
+                        className="h-10 cursor-pointer gap-2 px-5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         <Sparkles className="h-4 w-4" />
                         Generate My MCP Preview
@@ -422,7 +421,7 @@ export default function LiveDemo() {
                     </div>
 
                     {/* Quick-pick presets */}
-                    <div className="space-y-2 border-t border-white/[0.06] pt-4">
+                    <div className="space-y-2 border-t border-border pt-4">
                       <p className="flex items-center gap-1.5 text-xs text-muted-foreground/70">
                         <Zap className="h-3 w-3" />
                         Or try an example:
@@ -433,7 +432,7 @@ export default function LiveDemo() {
                             key={i}
                             type="button"
                             onClick={() => prefillPreset(i)}
-                            className="cursor-pointer rounded-md border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-xs text-mcpl-cyan/80 transition-colors hover:border-mcpl-cyan/30 hover:bg-mcpl-cyan/5 hover:text-mcpl-cyan"
+                            className="cursor-pointer rounded-md border border-border bg-muted px-3 py-1.5 text-xs text-primary transition-colors hover:border-primary/30 hover:bg-primary/5"
                           >
                             {preset.label}
                           </button>
@@ -514,15 +513,15 @@ export default function LiveDemo() {
                   {/* Header */}
                   <div className="flex items-center gap-2.5">
                     <span className="relative flex h-2.5 w-2.5">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-mcpl-green opacity-75" />
-                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-mcpl-green" />
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-foreground opacity-75" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-foreground" />
                     </span>
-                    <span className="font-mono text-xs tracking-wider text-mcpl-green uppercase">
+                    <span className="font-mono text-xs tracking-wider text-foreground uppercase">
                       Your product is now discoverable by AI
                     </span>
                   </div>
 
-                  <Separator className="bg-white/[0.08]" />
+                  <Separator />
 
                   {/* Scenario explainer */}
                   <div className="space-y-2">
@@ -537,8 +536,8 @@ export default function LiveDemo() {
                   </div>
 
                   {/* AI Discovery Simulation */}
-                  <div className="space-y-3 rounded-lg border border-white/[0.06] bg-white/[0.02] p-4">
-                    <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground/60 uppercase">
+                  <div className="space-y-3 rounded-lg border border-border bg-muted/50 p-4">
+                    <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
                       A real user, asking for help...
                     </p>
 
@@ -549,7 +548,7 @@ export default function LiveDemo() {
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4 }}
-                          className="rounded-md bg-white/[0.03] px-3 py-2"
+                          className="rounded-md bg-background px-3 py-2"
                         >
                           <p className="text-sm text-foreground/90 italic">
                             &ldquo;{result.demo_query}&rdquo;
@@ -569,15 +568,15 @@ export default function LiveDemo() {
                         >
                           {!showToolFound ? (
                             <>
-                              <Loader2 className="h-3.5 w-3.5 animate-spin text-mcpl-cyan" />
+                              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
                               <span className="text-xs text-muted-foreground">
                                 AI is searching for the best tool to help...
                               </span>
                             </>
                           ) : (
                             <>
-                              <Check className="h-3.5 w-3.5 text-mcpl-green" />
-                              <span className="text-xs text-mcpl-green">
+                              <Check className="h-3.5 w-3.5 text-foreground" />
+                              <span className="text-xs text-foreground">
                                 Found your product! Using{" "}
                                 <span className="font-mono font-semibold">
                                   {result.tools[0]?.name ?? "your_tool"}
@@ -597,14 +596,14 @@ export default function LiveDemo() {
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.4 }}
                         >
-                          <Separator className="my-2 bg-white/[0.06]" />
-                          <p className="mb-1 text-[0.65rem] font-medium tracking-wider text-mcpl-cyan/60 uppercase">
+                          <Separator className="my-2" />
+                          <p className="mb-1 text-[0.65rem] font-medium tracking-wider text-primary/60 uppercase">
                             AI recommends your product
                           </p>
                           <p className="text-sm leading-relaxed text-foreground/90">
                             {responseTypewriter.displayed}
                             {!responseTypewriter.done && (
-                              <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-mcpl-cyan" />
+                              <span className="ml-0.5 inline-block h-4 w-[2px] animate-pulse bg-primary" />
                             )}
                           </p>
                         </motion.div>
@@ -623,27 +622,27 @@ export default function LiveDemo() {
                       >
                         {/* Impact metrics */}
                         <div className="grid grid-cols-3 gap-3">
-                          <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-3 text-center">
-                            <DollarSign className="mx-auto mb-1 h-4 w-4 text-mcpl-green" />
-                            <p className="font-[family-name:var(--font-heading)] text-lg font-bold text-mcpl-green">
+                          <div className="rounded-lg border border-border bg-muted/50 p-3 text-center">
+                            <DollarSign className="mx-auto mb-1 h-4 w-4 text-foreground" />
+                            <p className="text-lg font-bold text-foreground">
                               $0
                             </p>
                             <p className="text-[0.6rem] text-muted-foreground">
                               Cost per referral
                             </p>
                           </div>
-                          <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-3 text-center">
-                            <Users className="mx-auto mb-1 h-4 w-4 text-mcpl-cyan" />
-                            <p className="font-[family-name:var(--font-heading)] text-lg font-bold text-mcpl-cyan">
+                          <div className="rounded-lg border border-border bg-muted/50 p-3 text-center">
+                            <Users className="mx-auto mb-1 h-4 w-4 text-primary" />
+                            <p className="text-lg font-bold text-primary">
                               24/7
                             </p>
                             <p className="text-[0.6rem] text-muted-foreground">
                               Always discoverable
                             </p>
                           </div>
-                          <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-3 text-center">
-                            <TrendingUp className="mx-auto mb-1 h-4 w-4 text-mcpl-cyan" />
-                            <p className="font-[family-name:var(--font-heading)] text-lg font-bold text-mcpl-cyan">
+                          <div className="rounded-lg border border-border bg-muted/50 p-3 text-center">
+                            <TrendingUp className="mx-auto mb-1 h-4 w-4 text-primary" />
+                            <p className="text-lg font-bold text-primary">
                               Auto
                             </p>
                             <p className="text-[0.6rem] text-muted-foreground">
@@ -653,7 +652,7 @@ export default function LiveDemo() {
                         </div>
 
                         {/* Explainer */}
-                        <div className="rounded-lg border border-mcpl-cyan/10 bg-mcpl-cyan/[0.03] px-4 py-3">
+                        <div className="rounded-lg border border-primary/10 bg-primary/5 px-4 py-3">
                           <p className="text-xs leading-relaxed text-muted-foreground">
                             <span className="font-medium text-foreground">
                               This is your zero-cost ad.
@@ -668,7 +667,7 @@ export default function LiveDemo() {
 
                         {/* Tools as proof */}
                         <div className="space-y-2">
-                          <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground/60 uppercase">
+                          <p className="text-[0.65rem] font-medium tracking-wider text-muted-foreground uppercase">
                             {result.tools.length} capabilities AI can recommend
                             you for
                           </p>
@@ -685,7 +684,7 @@ export default function LiveDemo() {
                               >
                                 <Badge
                                   variant="outline"
-                                  className="gap-1.5 border-mcpl-cyan/30 bg-mcpl-cyan/5 px-3 py-1 font-mono text-[0.65rem] text-mcpl-cyan"
+                                  className="gap-1.5 px-3 py-1 font-mono text-[0.65rem]"
                                 >
                                   {tool.name}
                                 </Badge>
@@ -695,7 +694,7 @@ export default function LiveDemo() {
                         </div>
 
                         {/* CTA */}
-                        <div className="rounded-xl border border-mcpl-green/20 bg-mcpl-green/[0.04] p-5">
+                        <div className="rounded-xl border border-border bg-muted p-5">
                           <p className="mb-1 text-sm font-medium text-foreground">
                             Make this live — start getting discovered today
                           </p>
@@ -706,7 +705,7 @@ export default function LiveDemo() {
                           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <Button
                               size="lg"
-                              className="h-10 cursor-pointer gap-2 bg-mcpl-green px-5 text-sm font-semibold text-mcpl-deep hover:bg-mcpl-green/85"
+                              className="h-10 cursor-pointer gap-2 px-5 text-sm font-semibold"
                               asChild
                             >
                               <a href="/login">
@@ -732,6 +731,7 @@ export default function LiveDemo() {
             </AnimatePresence>
           </div>
         </motion.div>
+        </div>
       </div>
     </section>
   );

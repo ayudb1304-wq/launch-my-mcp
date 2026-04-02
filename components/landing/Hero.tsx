@@ -14,17 +14,17 @@ const terminalLines = [
   {
     prefix: "> ",
     text: 'User asks Claude: "Find me a good invoicing tool"',
-    color: "text-mcpl-cyan",
+    color: "text-foreground",
   },
   {
     prefix: "> ",
-    text: "Claude calls: mcplaunch.io/mcp/invoicehero/search_tools",
-    color: "text-mcpl-green",
+    text: "Claude calls: launchmymcp.com/mcp/invoicehero/search_tools",
+    color: "text-muted-foreground",
   },
   {
     prefix: "> ",
     text: 'Claude responds: "I found InvoiceHero — it lets you...',
-    color: "text-foreground/80",
+    color: "text-muted-foreground/70",
   },
 ];
 
@@ -97,30 +97,28 @@ function AnimatedTerminal() {
       transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
       className="relative w-full"
     >
-      <div className="absolute -inset-4 rounded-2xl bg-mcpl-cyan/5 blur-2xl" />
-
-      <div className="relative overflow-hidden rounded-xl border border-mcpl-cyan/15 bg-[#0D1117] shadow-2xl shadow-mcpl-cyan/5">
-        <div className="flex items-center gap-2 border-b border-white/5 px-4 py-3">
-          <span className="size-3 rounded-full bg-[#FF5F57]" />
-          <span className="size-3 rounded-full bg-[#FEBC2E]" />
-          <span className="size-3 rounded-full bg-[#28C840]" />
-          <span className="ml-3 font-[family-name:var(--font-mono)] text-xs text-white/30">
+      <div className="relative overflow-hidden rounded-xl border border-border bg-card shadow-xl">
+        <div className="flex items-center gap-2 border-b border-border px-4 py-3">
+          <span className="size-3 rounded-full bg-red-400" />
+          <span className="size-3 rounded-full bg-yellow-400" />
+          <span className="size-3 rounded-full bg-green-400" />
+          <span className="ml-3 font-mono text-xs text-muted-foreground">
             terminal
           </span>
         </div>
 
-        <div className="min-h-[180px] p-5 font-[family-name:var(--font-mono)] text-sm leading-relaxed md:min-h-[200px]">
+        <div className="min-h-[180px] p-5 font-mono text-sm leading-relaxed md:min-h-[200px]">
           {displayedLines.map((text, i) => (
             <div key={i} className={`mb-3 ${lines[i]?.color ?? ""}`}>
               {text}
               {i === currentLineIndex && (
-                <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] animate-pulse bg-mcpl-cyan" />
+                <span className="ml-0.5 inline-block h-4 w-[2px] translate-y-[2px] animate-pulse bg-foreground" />
               )}
             </div>
           ))}
           {currentLineIndex >= lines.length && displayedLines.length > 0 && (
             <div className="mt-3">
-              <span className="inline-block h-4 w-[2px] animate-pulse bg-mcpl-cyan" />
+              <span className="inline-block h-4 w-[2px] animate-pulse bg-foreground" />
             </div>
           )}
         </div>
@@ -169,8 +167,6 @@ export function Hero() {
       id="hero"
       className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,rgba(0,229,255,0.06),transparent_70%)]" />
-
       <div className="relative mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[1fr_0.7fr] lg:items-center lg:gap-16">
         {/* ---- Left column ---- */}
         <motion.div
@@ -179,22 +175,22 @@ export function Hero() {
           animate="visible"
           className="flex flex-col"
         >
-          <motion.p
+          <motion.div
             variants={fadeUp}
-            className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-mcpl-cyan"
+            className="mb-5 inline-flex items-center gap-2 rounded-full border border-border px-3 py-1"
           >
-            The future of zero-CAC distribution
-          </motion.p>
+            <span className="h-1.5 w-1.5 rounded-full bg-foreground" />
+            <span className="text-xs font-medium text-muted-foreground">
+              The future of zero-CAC distribution
+            </span>
+          </motion.div>
 
           <motion.h1
             variants={fadeUp}
-            className="mb-6 font-[family-name:var(--font-heading)] text-5xl leading-[1.1] font-bold tracking-tight text-foreground md:text-7xl"
+            className="mb-6 text-5xl leading-[1.08] font-bold tracking-tight text-foreground md:text-7xl"
           >
-            Let AI assistants
-            <br />
-            <span className="bg-gradient-to-r from-mcpl-cyan to-mcpl-green bg-clip-text text-transparent">
-              discover your product.
-            </span>
+            Let AI assistants{" "}
+            <span className="text-muted-foreground">discover your product.</span>
           </motion.h1>
 
           <motion.p
@@ -212,7 +208,7 @@ export function Hero() {
             className="flex flex-wrap items-center gap-4"
           >
             <Button
-              className="h-12 cursor-pointer rounded-lg bg-mcpl-cyan px-7 text-sm font-semibold text-mcpl-deep shadow-[0_0_24px_rgba(0,229,255,0.35)] transition-all hover:bg-mcpl-cyan/90 hover:shadow-[0_0_36px_rgba(0,229,255,0.55)]"
+              className="h-12 cursor-pointer rounded-lg px-7 text-sm font-semibold"
               asChild
             >
               <Link href="/login">
@@ -223,7 +219,7 @@ export function Hero() {
 
             <Button
               variant="outline"
-              className="h-12 cursor-pointer gap-2 rounded-lg border-border/50 px-6 text-sm text-muted-foreground hover:border-mcpl-cyan/30 hover:text-foreground"
+              className="h-12 cursor-pointer gap-2 rounded-lg px-6 text-sm"
               onClick={() => scrollTo("#how-it-works")}
             >
               <Play className="size-4 fill-current" />
@@ -234,14 +230,14 @@ export function Hero() {
           {/* Social proof */}
           <motion.div
             variants={fadeUp}
-            className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border/30 pt-6"
+            className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border pt-6"
           >
             {proofItems.map((item) => (
               <span
                 key={item.text}
                 className="flex items-center gap-2 text-xs text-muted-foreground"
               >
-                <item.icon className="size-3.5 text-mcpl-cyan/70" />
+                <item.icon className="size-3.5 text-primary/70" />
                 {item.text}
               </span>
             ))}

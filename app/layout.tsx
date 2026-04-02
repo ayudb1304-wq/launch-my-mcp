@@ -1,27 +1,18 @@
-import { Space_Mono, DM_Sans, JetBrains_Mono } from "next/font/google"
+import { Manrope } from "next/font/google"
+import { GeistMono } from "geist/font/mono"
 import type { Metadata } from "next"
 
 import "./globals.css"
 import { cn } from "@/lib/utils"
+import { ThemeProvider } from "@/components/theme-provider"
 
-const spaceMono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-heading",
-})
-
-const dmSans = DM_Sans({
+const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-sans",
 })
 
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-mono",
-})
-
 export const metadata: Metadata = {
-  title: "MCPLaunch — Get Discovered by AI Assistants | Zero-CAC Distribution",
+  title: "Launch My MCP — Get Discovered by AI Assistants | Zero-CAC Distribution",
   description:
     "Turn your API into an MCP server in 5 minutes. Get your product discovered by Claude, ChatGPT, and Perplexity organically. No ads, no engineers, zero customer acquisition cost.",
   keywords: [
@@ -37,14 +28,14 @@ export const metadata: Metadata = {
     "Smithery MCP",
   ],
   openGraph: {
-    title: "MCPLaunch — Let AI Find Your Product",
+    title: "Launch My MCP — Let AI Find Your Product",
     description:
       "Turn your API into a hosted MCP server. Get discovered by Claude, ChatGPT, and Perplexity. Free to start.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "MCPLaunch — AI-Native Distribution for SaaS",
+    title: "Launch My MCP — AI-Native Distribution for SaaS",
     description:
       "Stop paying for ads. Get your product discovered by AI assistants instead.",
   },
@@ -58,14 +49,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
-        "dark antialiased",
-        dmSans.variable,
-        jetbrainsMono.variable,
-        spaceMono.variable
+        "antialiased",
+        manrope.variable,
+        GeistMono.variable
       )}
     >
-      <body>{children}</body>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   )
 }

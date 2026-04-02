@@ -16,6 +16,8 @@ const toolSchema = z.object({
   ),
   enabled: z.boolean(),
   quality_score: z.number().min(1).max(10),
+  tool_type: z.enum(["discovery", "action"]).default("discovery"),
+  static_response: z.record(z.string(), z.unknown()).optional(),
 });
 
 const bodySchema = z.object({
@@ -23,6 +25,7 @@ const bodySchema = z.object({
   slug: z.string().min(1).max(60),
   description: z.string().min(10).max(1000),
   website_url: z.string().url().optional().or(z.literal("")),
+  product_metadata: z.record(z.string(), z.unknown()).optional(),
   tools: z.array(toolSchema).min(1),
 });
 
@@ -46,7 +49,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { name, slug, description, website_url, tools } = parsed.data;
+  const { name, slug, description, website_url, product_metadata, tools } = parsed.data;
 
   // Check plan limits
   const { data: userData } = await supabase
@@ -89,6 +92,11 @@ export async function POST(request: Request) {
     );
   }
 
+  // Determine server mode
+  const hasDiscoveryTools = tools.some((t) => t.tool_type === "discovery");
+  const hasActionTools = tools.some((t) => t.tool_type === "action");
+  const serverMode = hasDiscoveryTools && hasActionTools ? "hybrid" : "discovery";
+
   // Create project
   const { data: project, error: projectError } = await supabase
     .from("mcp_projects")
@@ -98,6 +106,9 @@ export async function POST(request: Request) {
       slug,
       description,
       website_url: website_url || null,
+      product_website: website_url || null,
+      product_metadata: product_metadata || {},
+      server_mode: serverMode,
       status: "live",
     })
     .select("id")
@@ -120,6 +131,8 @@ export async function POST(request: Request) {
       description: t.description,
       parameters: t.parameters,
       quality_score: t.quality_score,
+      tool_type: t.tool_type,
+      static_response: t.static_response || null,
       enabled: true,
     }));
 

@@ -99,6 +99,27 @@ async function handleRequest(
             const startTime = Date.now();
 
             try {
+              let responseData: unknown;
+
+              if (tool.tool_type === "discovery" && tool.static_response) {
+                // Discovery tool — return rich static_response from database
+                responseData = tool.static_response;
+              } else if (tool.tool_type === "action") {
+                // Action tool — future feature
+                responseData = {
+                  message: `Action tool "${tool.name}" requires API connection. Configure in dashboard.`,
+                  setup_url: `https://launchmymcp.com/dashboard/projects/${project.id}/api`,
+                };
+              } else {
+                // Fallback for tools without static_response
+                responseData = {
+                  tool: tool.name,
+                  description: tool.description,
+                  message: `Tool "${tool.name}" from ${project.name} was called successfully.`,
+                  args,
+                };
+              }
+
               // Log discovery event
               await supabase.from("discovery_events").insert({
                 project_id: project.id,
@@ -112,12 +133,7 @@ async function handleRequest(
                 content: [
                   {
                     type: "text" as const,
-                    text: JSON.stringify({
-                      tool: tool.name,
-                      description: tool.description,
-                      message: `Tool "${tool.name}" from ${project.name} was called successfully. This MCP server is hosted by MCPLaunch.`,
-                      args,
-                    }),
+                    text: JSON.stringify(responseData, null, 2),
                   },
                 ],
               };
@@ -146,7 +162,7 @@ async function handleRequest(
     },
     {
       serverInfo: {
-        name: `mcplaunch-${slug}`,
+        name: `launchmymcp-${slug}`,
         version: "1.0.0",
       },
     },

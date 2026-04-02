@@ -17,22 +17,22 @@ export function MetricsBar({
       label: "Discovery Events",
       value: totalEvents.toLocaleString(),
       icon: Activity,
-      color: "text-mcpl-cyan",
-      bgColor: "bg-mcpl-cyan/10",
+      color: "text-blue-600 dark:text-blue-400",
+      bgColor: "bg-blue-50 dark:bg-blue-950",
     },
     {
       label: "Live Servers",
       value: `${liveServers}/${totalServers}`,
       icon: Server,
-      color: "text-mcpl-green",
-      bgColor: "bg-mcpl-green/10",
+      color: "text-green-600 dark:text-green-400",
+      bgColor: "bg-green-50 dark:bg-green-950",
     },
     {
       label: "Ad Spend Saved",
       value: `$${adSpendSaved.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`,
       icon: DollarSign,
-      color: "text-yellow-400",
-      bgColor: "bg-yellow-400/10",
+      color: "text-amber-600 dark:text-amber-400",
+      bgColor: "bg-amber-50 dark:bg-amber-950",
     },
   ];
 
@@ -41,7 +41,7 @@ export function MetricsBar({
       {metrics.map((metric) => (
         <div
           key={metric.label}
-          className="rounded-lg border border-gray-800 bg-gray-900/50 p-4"
+          className="rounded-lg bg-card p-4 ring-1 ring-foreground/10"
         >
           <div className="flex items-center gap-3">
             <div
@@ -50,8 +50,8 @@ export function MetricsBar({
               <metric.icon className={`h-5 w-5 ${metric.color}`} />
             </div>
             <div>
-              <p className="text-2xl font-bold text-white">{metric.value}</p>
-              <p className="text-xs text-gray-400">{metric.label}</p>
+              <p className="text-2xl font-bold text-foreground">{metric.value}</p>
+              <p className="text-xs text-muted-foreground">{metric.label}</p>
             </div>
           </div>
         </div>

@@ -10,7 +10,7 @@ import CTAFooter from "@/components/landing/CTAFooter";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[var(--mcpl-deep)]">
+    <main className="min-h-screen bg-background">
       <Navbar />
       <Hero />
       <LiveDemo />

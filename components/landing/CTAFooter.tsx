@@ -19,24 +19,21 @@ export default function CTAFooter() {
       ref={sectionRef}
       className="relative overflow-hidden px-6 py-24 md:py-32"
     >
-      {/* Gradient background */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-[var(--mcpl-cyan)]/[0.04] via-transparent to-transparent" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,229,255,0.06)_0%,transparent_70%)]" />
-
-      <div className="relative mx-auto max-w-3xl text-center">
+      <div className="relative mx-auto max-w-7xl">
         {/* Headline */}
         <motion.h2
-          className="font-heading text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl"
+          className="text-3xl font-bold tracking-tight text-foreground md:text-4xl lg:text-5xl"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
         >
-          Your first AI discovery event is 5 minutes away.
+          Your first AI discovery event{" "}
+          <span className="text-muted-foreground">is 5 minutes away.</span>
         </motion.h2>
 
         {/* Subtext */}
         <motion.p
-          className="mx-auto mt-5 max-w-lg text-lg text-muted-foreground"
+          className="mt-5 max-w-lg text-lg text-muted-foreground"
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.15 }}
@@ -53,7 +50,7 @@ export default function CTAFooter() {
         >
           <Button
             size="lg"
-            className="h-14 cursor-pointer rounded-xl bg-mcpl-cyan px-10 text-base font-bold text-mcpl-deep shadow-[0_0_30px_rgba(0,229,255,0.35)] transition-all hover:bg-mcpl-cyan/90 hover:shadow-[0_0_50px_rgba(0,229,255,0.5)]"
+            className="h-14 cursor-pointer rounded-xl px-10 text-base font-bold"
             asChild
           >
             <Link href="/login">
@@ -65,12 +62,12 @@ export default function CTAFooter() {
 
         {/* Mini footer links */}
         <motion.div
-          className="mt-16 flex flex-col items-center gap-4"
+          className="mt-16 flex flex-col items-start gap-4"
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.6, delay: 0.45 }}
         >
-          <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-2">
             {[
               { label: "Pricing", href: "#pricing" },
               { label: "FAQ", href: "#faq" },
