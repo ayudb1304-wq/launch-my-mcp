@@ -38,7 +38,8 @@ function ChatSimulation({
       if (desc) {
         response += ` ${typeof desc === "string" ? desc.split(".").slice(0, 2).join(".") + "." : ""}`;
       }
-      const audience = overview.static_response.target_audience as string;
+      const rawAudience = overview.static_response.target_audience;
+      const audience = typeof rawAudience === "string" ? rawAudience : Array.isArray(rawAudience) ? rawAudience.join(", ") : "";
       if (audience) {
         response += ` It's designed for ${audience.toLowerCase()}.`;
       }
@@ -94,8 +95,8 @@ function ChatSimulation({
                   const overview = tools.find(
                     (t) => t.name === "get_product_overview",
                   );
-                  const audience =
-                    (overview?.static_response?.target_audience as string) ?? "";
+                  const raw = overview?.static_response?.target_audience;
+                  const audience = typeof raw === "string" ? raw : Array.isArray(raw) ? raw.join(", ") : "";
                   return audience ? audience.toLowerCase() : "my use case";
                 })()}
                 ?
