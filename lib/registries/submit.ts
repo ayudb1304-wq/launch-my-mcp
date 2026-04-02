@@ -130,8 +130,9 @@ export async function submitToAllRegistries(
 
   const availableRegistries = getRegistriesForPlan(plan);
 
-  // Filter out already submitted or indexed registries
+  // Filter out already submitted/indexed registries and non-automatable ones
   const toSubmit = availableRegistries.filter((id) => {
+    if (!REGISTRIES[id].automatable) return false;
     const existing = propagation.registries[id];
     return !existing || existing.status === "not_submitted" || existing.status === "error";
   });
