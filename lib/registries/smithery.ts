@@ -50,9 +50,14 @@ export async function submit(
     }
 
     // Step 2: Publish an external release pointing to our MCP endpoint
+    // The "payload" field must be a JSON-stringified object inside multipart form data
+    const deployPayload = JSON.stringify({
+      type: "external",
+      upstreamUrl: payload.serverUrl,
+    });
+
     const formData = new FormData();
-    formData.append("type", "external");
-    formData.append("url", payload.serverUrl);
+    formData.append("payload", deployPayload);
 
     const releaseRes = await fetch(
       `${API_BASE}/servers/${qualifiedName}/releases`,
