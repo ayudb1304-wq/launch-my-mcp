@@ -5,6 +5,7 @@ import HowItWorks from "@/components/landing/HowItWorks";
 import ProblemSection from "@/components/landing/ProblemSection";
 import DiscoveryFeed from "@/components/landing/DiscoveryFeed";
 import { Pricing } from "@/components/landing/Pricing";
+import Enterprise from "@/components/landing/Enterprise";
 import { FAQ } from "@/components/landing/FAQ";
 import CTAFooter from "@/components/landing/CTAFooter";
 
@@ -18,6 +19,7 @@ export default function Home() {
       <ProblemSection />
       <DiscoveryFeed />
       <Pricing />
+      <Enterprise />
       <FAQ />
       <CTAFooter />
     </main>
