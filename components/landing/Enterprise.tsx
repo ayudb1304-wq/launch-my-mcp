@@ -3,77 +3,97 @@
 import { motion } from "framer-motion";
 import {
   ArrowRight,
-  Shield,
-  Lock,
+  AlertCircle,
+  Clock,
+  FileText,
   Network,
+  Lock,
   ClipboardCheck,
-  Building2,
   Workflow,
+  Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-const pillars = [
+type Phase = "Problem" | "Solution" | "Outcome";
+
+interface Step {
+  phase: Phase;
+  icon: typeof Lock;
+  title: string;
+  body: string;
+}
+
+const steps: Step[] = [
   {
-    icon: Lock,
-    title: "Entra ID & on-behalf-of auth",
+    phase: "Problem",
+    icon: AlertCircle,
+    title: "Agents everywhere. Access nowhere.",
     body:
-      "Every tool call carries the caller's identity, not a shared service account. Your existing SSO policies, conditional access, and RBAC apply without a second identity system to maintain.",
+      "Foundry, Copilot, and Jules are live across your org. None of them can reach the internal systems that matter.",
   },
   {
+    phase: "Problem",
+    icon: Clock,
+    title: "The integration backlog.",
+    body:
+      "Every new agent use case lands on your platform team. Pilots stall before they ever see production.",
+  },
+  {
+    phase: "Solution",
+    icon: FileText,
+    title: "Describe the system.",
+    body:
+      "Point us at an internal API. We generate the MCP tool definitions for your team to review and approve.",
+  },
+  {
+    phase: "Solution",
     icon: Network,
-    title: "Private deployment, your tenant",
+    title: "Deploy into your tenant.",
     body:
-      "Deploy MCP servers into your own Azure subscription over Private Link. Regulated data never leaves your VNet, and your cloud team keeps the infrastructure it already knows how to operate.",
+      "Azure Container Apps in your subscription, over Private Link. Regulated data never leaves your VNet.",
   },
   {
-    icon: Workflow,
-    title: "Native integrations across agents",
+    phase: "Solution",
+    icon: Lock,
+    title: "Entra ID on every call.",
     body:
-      "One-click registration with Azure AI Foundry Agent Service, Microsoft 365 Copilot, GitHub Copilot, and any MCP-compliant client your teams adopt next. Register once, everywhere.",
+      "Tool calls run on behalf of the real user, not a shared service account. Your existing RBAC applies as-is.",
   },
   {
+    phase: "Solution",
     icon: ClipboardCheck,
-    title: "Audit & compliance",
+    title: "Audit trail by default.",
     body:
-      "SOC 2 Type II and ISO 27001 on the platform. A complete, tamper-evident audit trail of every tool call is exportable to your SIEM with role-based access controls at the tool level.",
+      "Every tool invocation is logged, tamper-evident, and exportable to your SIEM on your existing schedule.",
   },
   {
-    icon: Shield,
-    title: "Governance at the protocol level",
+    phase: "Solution",
+    icon: Workflow,
+    title: "Register once. Reach every agent.",
     body:
-      "PII redaction, prompt shields, per-tenant rate limits, and human-in-the-loop approval workflows for write operations. Security guardrails enforced on the server, not on every client.",
+      "Foundry Agent Service, M365 Copilot, GitHub Copilot, and any MCP client — from a single server.",
   },
   {
-    icon: Building2,
-    title: "Azure Marketplace transactable",
+    phase: "Outcome",
+    icon: Check,
+    title: "Pilots reach production.",
     body:
-      "Procure through Azure Marketplace and draw down committed Azure spend. Standard MSA, DPA, and vendor security reviews on file — designed for the way enterprise actually buys.",
+      "Security signs off. Procurement approves. Your platform team stops being the bottleneck.",
   },
 ];
 
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.08 } },
-};
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] as const },
-  },
+const phaseLabel: Record<Phase, string> = {
+  Problem: "01 · The pain",
+  Solution: "02 · What we ship",
+  Outcome: "03 · The outcome",
 };
 
 export default function Enterprise() {
   return (
-    <section
-      id="enterprise"
-      className="relative px-6 py-24 md:py-32"
-    >
-      <div className="mx-auto max-w-7xl">
-        {/* Eyebrow */}
+    <section id="enterprise" className="relative px-6 py-24 md:py-32">
+      <div className="mx-auto max-w-5xl">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -88,120 +108,83 @@ export default function Enterprise() {
             Coming soon — Enterprise
           </Badge>
           <span className="hidden text-xs text-muted-foreground/70 sm:inline">
-            Private preview begins Q3 2026
+            Private preview · Q3 2026
           </span>
         </motion.div>
 
-        {/* Headline */}
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="mb-6 max-w-3xl text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl lg:text-5xl"
+          className="mb-4 max-w-3xl text-3xl font-bold leading-tight tracking-tight text-foreground md:text-4xl lg:text-5xl"
         >
-          Your agents already know how to reach your customers.{" "}
-          <span className="text-muted-foreground">
-            Now let them reach your operations.
-          </span>
+          From stalled pilots to production agents.{" "}
+          <span className="text-muted-foreground">Here&apos;s the path.</span>
         </motion.h2>
 
-        {/* Lead narrative */}
-        <motion.div
+        <motion.p
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-14 max-w-3xl space-y-5 text-base leading-relaxed text-muted-foreground md:text-lg"
+          className="mb-16 max-w-2xl text-base leading-relaxed text-muted-foreground"
         >
-          <p>
-            Walk into most enterprises today and the pattern is the same.
-            Azure AI Foundry is running pilots. Copilot is deployed across
-            sales and support. A handful of engineering teams are running
-            Jules against their repositories. And every one of them hits the
-            same wall — the internal systems that would make those agents
-            genuinely useful are locked behind authentication models built
-            for humans, not agents.
-          </p>
-          <p>
-            So a central platform team becomes the bottleneck. Integrations
-            get built one at a time. Six months later, three systems are
-            connected and every pilot is stuck in demo-land. The promise of
-            agents doing real work never meets the reality of production
-            access controls.
-          </p>
-          <p className="text-foreground">
-            Launch My MCP for Enterprise is built to close that gap — without
-            asking your security team to approve anything they haven&apos;t
-            seen before.
-          </p>
-        </motion.div>
+          How an enterprise agent program goes from demo to deployed — without
+          another custom integration project.
+        </motion.p>
 
-        {/* Story card */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="mb-12 rounded-2xl border border-border bg-card p-8 md:p-10"
-        >
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-            <div>
-              <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                How it works
-              </h3>
-              <p className="text-lg font-medium leading-snug text-foreground md:text-xl">
-                Turn any internal API into a governed MCP server in under an
-                hour — with the controls your security team will actually
-                sign off on.
-              </p>
-            </div>
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical rail */}
+          <div
+            aria-hidden
+            className="absolute left-[19px] top-2 bottom-2 w-px bg-border md:left-[23px]"
+          />
 
-            <div className="space-y-5 text-sm leading-relaxed text-muted-foreground md:text-base">
-              <p>
-                You describe the system in plain English. We generate the
-                MCP tool definitions, deploy them into your own Azure
-                subscription, and wire them to Entra ID so every call is
-                made on behalf of the user asking. Your audit log gets a
-                record of each tool invocation, exportable to your SIEM on
-                the same schedule as the rest of your logs.
-              </p>
-              <p>
-                Register the server once. It becomes immediately discoverable
-                by Foundry Agent Service, Microsoft 365 Copilot, GitHub
-                Copilot, and any MCP-compliant agent your teams adopt next —
-                without another integration project.
-              </p>
-            </div>
-          </div>
-        </motion.div>
+          <ol className="flex flex-col gap-10">
+            {steps.map((step, i) => {
+              const prevPhase = i > 0 ? steps[i - 1].phase : null;
+              const showPhaseLabel = step.phase !== prevPhase;
+              const Icon = step.icon;
 
-        {/* Pillars grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          className="mb-16 grid gap-4 md:grid-cols-2 lg:grid-cols-3"
-        >
-          {pillars.map((pillar) => (
-            <motion.div
-              key={pillar.title}
-              variants={fadeUp}
-              className="flex flex-col rounded-xl border border-border bg-card p-6"
-            >
-              <div className="mb-4 inline-flex size-9 items-center justify-center rounded-lg border border-border bg-background">
-                <pillar.icon className="size-4 text-foreground" />
-              </div>
-              <h4 className="mb-2 text-sm font-semibold text-foreground">
-                {pillar.title}
-              </h4>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {pillar.body}
-              </p>
-            </motion.div>
-          ))}
-        </motion.div>
+              return (
+                <motion.li
+                  key={step.title}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{
+                    duration: 0.5,
+                    ease: [0.25, 0.46, 0.45, 0.94],
+                  }}
+                  className="relative pl-14 md:pl-16"
+                >
+                  {/* Node dot */}
+                  <span
+                    aria-hidden
+                    className="absolute left-0 top-0 flex size-10 items-center justify-center rounded-full border border-border bg-background md:size-12"
+                  >
+                    <Icon className="size-4 text-foreground md:size-[18px]" />
+                  </span>
+
+                  {showPhaseLabel && (
+                    <p className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/80">
+                      {phaseLabel[step.phase]}
+                    </p>
+                  )}
+
+                  <h3 className="mb-1.5 text-lg font-semibold leading-snug text-foreground md:text-xl">
+                    {step.title}
+                  </h3>
+                  <p className="max-w-xl text-sm leading-relaxed text-muted-foreground md:text-base">
+                    {step.body}
+                  </p>
+                </motion.li>
+              );
+            })}
+          </ol>
+        </div>
 
         {/* CTA band */}
         <motion.div
@@ -209,16 +192,14 @@ export default function Enterprise() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-80px" }}
           transition={{ duration: 0.6 }}
-          className="flex flex-col items-start gap-6 rounded-2xl border border-foreground/20 bg-foreground p-8 text-background md:flex-row md:items-center md:justify-between md:p-10"
+          className="mt-20 flex flex-col items-start gap-6 rounded-2xl border border-foreground/20 bg-foreground p-8 text-background md:flex-row md:items-center md:justify-between md:p-10"
         >
-          <div className="max-w-2xl">
+          <div className="max-w-xl">
             <h3 className="mb-2 text-xl font-bold tracking-tight md:text-2xl">
-              Join the design partner program
+              Join the design partner program.
             </h3>
-            <p className="text-sm leading-relaxed text-background/80 md:text-base">
-              We&apos;re working with a small cohort across financial
-              services, healthcare, and manufacturing to shape the roadmap
-              before general availability. Early partners get hands-on
+            <p className="text-sm leading-relaxed text-background/80">
+              A small cohort is shaping the roadmap before GA. Hands-on
               implementation support and preferential pricing at launch.
             </p>
           </div>
